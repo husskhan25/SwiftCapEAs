@@ -185,28 +185,31 @@
       display: flex; align-items: center; justify-content: center; position: relative;
     }
     .hero-logo-showcase {
-      width: 420px; height: 420px; position: relative;
+      width: 500px; height: 500px; position: relative;
       display: flex; align-items: center; justify-content: center;
     }
     .hero-logo-showcase::before {
       content: ''; position: absolute; inset: 0;
-      border: 1px solid var(--border); border-radius: 50%;
+      border: 1px solid rgba(17,53,102,.25);
+      border-radius: 50%;
       animation: rotateSlow 30s linear infinite;
     }
     .hero-logo-showcase::after {
-      content: ''; position: absolute; inset: 30px;
-      border: 1px solid rgba(255,185,30,.1); border-radius: 50%;
+      content: ''; position: absolute; inset: 40px;
+      border: 1px solid rgba(17,53,102,.15);
+      border-radius: 50%;
       animation: rotateSlow 20s linear infinite reverse;
     }
     @keyframes rotateSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
     .hero-logo-showcase img {
-      width: 200px; height: 200px; border-radius: 24px;
+      width: 280px; height: 280px; border-radius: 0;
       position: relative; z-index: 2;
-      box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 80px rgba(255,185,30,.08);
+      box-shadow: none;
+      background: transparent;
     }
     .hero-logo-glow {
       position: absolute; inset: 0;
-      background: radial-gradient(circle, rgba(255,185,30,.06) 0%, transparent 60%);
+      background: radial-gradient(circle, rgba(17,53,102,.12) 0%, transparent 60%);
       pointer-events: none;
     }
 
