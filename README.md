@@ -1,1 +1,0 @@
-# SwiftCap-Landing
