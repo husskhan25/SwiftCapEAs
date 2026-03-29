@@ -582,7 +582,7 @@
       }
       .nav-actions.open {
         display: flex; flex-direction: column;
-        position: absolute; top: calc(76px + 220px);
+        position: absolute; top: calc(76px + 260px);
         left: 0; right: 0; padding: 0 28px 28px;
         background: rgba(6,14,28,.97); gap: 10px;
       }
@@ -1127,6 +1127,7 @@
     });
 
     // Scroll animations
+    // Scroll animations — faster appearance
     const animObs = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -1134,21 +1135,34 @@
           entry.target.style.transform = 'translateY(0)';
         }
       });
-    }, { threshold: 0.08 });
+    }, { threshold: 0.03 });
 
     document.querySelectorAll(
       '.problem-card, .product-card, .hiw-step, .testimonial-card, .community-card'
     ).forEach((el, i) => {
       el.style.opacity = '0';
-      el.style.transform = 'translateY(24px)';
-      el.style.transition = `opacity 0.7s ease ${i * 0.08}s, transform 0.7s ease ${i * 0.08}s`;
+      el.style.transform = 'translateY(16px)';
+      el.style.transition = `opacity 0.4s ease ${i * 0.04}s, transform 0.4s ease ${i * 0.04}s`;
       animObs.observe(el);
     });
 
     // Pause marquee on hover
+        // Pause marquee on hover AND touch
     const marquee = document.getElementById('marqueeTrack');
     marquee.addEventListener('mouseenter', () => { marquee.style.animationPlayState = 'paused'; });
     marquee.addEventListener('mouseleave', () => { marquee.style.animationPlayState = 'running'; });
+    marquee.addEventListener('touchstart', () => { marquee.style.animationPlayState = 'paused'; }, { passive: true });
+    marquee.addEventListener('touchend', () => { marquee.style.animationPlayState = 'running'; }, { passive: true });
+
+    // Prevent marquee from getting stuck after returning from partner link
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        marquee.style.animationPlayState = 'running';
+      }
+    });
+    window.addEventListener('pageshow', () => {
+      marquee.style.animationPlayState = 'running';
+    });
   </script>
 
 </body>
