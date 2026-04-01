@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Expert Advisors — SwiftCap EAs</title>
-  <meta name="description" content="Explore all four SwiftCap Expert Advisors. Deep-dive specs, performance stats, compatible pairs and direct MQL5 links for every EA." />
+  <meta name="description" content="Explore all SwiftCap Expert Advisors. Four precision-engineered trading algorithms for MT4/MT5 — built for prop firm challenges and personal capital growth." />
   <link rel="icon" type="image/png" href="logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     /* ══════════════════════════════════════════════════
-       SwiftCap EAs — EAs Page
+       SwiftCap EAs — EAs Page (Merged)
        Brand: Deep Navy #113566 | Gold Ember #FFB91E | Pure White #FFFFFF
        Display Font: Agatho (fallback: Georgia, serif)
        Primary Font: Montserrat
@@ -94,7 +94,7 @@
       line-height: 1.15; margin-bottom: 20px; letter-spacing: -.5px;
     }
     .section-subtitle {
-      color: var(--grey); font-size: 1rem; max-width: 580px;
+      color: var(--grey); font-size: 1rem; max-width: 680px;
       line-height: 1.8; font-weight: 300;
     }
     .gold { color: var(--gold); }
@@ -138,16 +138,16 @@
       color: var(--white); font-size: 1.4rem; cursor: pointer;
     }
 
-    /* ══════════ PAGE HERO ══════════ */
+    /* ══════════ PAGE HERO (from Code 1) ══════════ */
     .page-hero {
-      position: relative; padding: 150px 0 80px; overflow: hidden;
+      position: relative; padding: 140px 0 80px; overflow: hidden;
       background: var(--bg-primary);
     }
     .page-hero::before {
       content: ''; position: absolute; inset: 0;
       background:
-        radial-gradient(ellipse 60% 50% at 50% 0%, rgba(17,53,102,.3) 0%, transparent 70%),
-        radial-gradient(ellipse 30% 40% at 85% 30%, rgba(255,185,30,.05) 0%, transparent 60%);
+        radial-gradient(ellipse 70% 60% at 50% 0%, rgba(17,53,102,.3) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 20%, rgba(255,185,30,.04) 0%, transparent 60%);
       pointer-events: none;
     }
     .page-hero::after {
@@ -169,36 +169,35 @@
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
     .page-hero h1 {
       font-family: 'Agatho', Georgia, serif;
-      font-size: clamp(2.4rem, 5vw, 3.8rem);
-      font-weight: 400; line-height: 1.1;
-      margin-bottom: 20px; letter-spacing: -1px;
+      font-size: clamp(2.6rem, 5vw, 4rem);
+      font-weight: 400; line-height: 1.08;
+      margin-bottom: 24px; letter-spacing: -1px;
     }
-    .page-hero p {
+    .page-hero h1 .thin { font-weight: 300; color: var(--grey-light); }
+    .page-hero-desc {
       color: var(--grey); font-size: 1.05rem; line-height: 1.85;
-      max-width: 560px; margin: 0 auto 36px; font-weight: 300;
+      max-width: 620px; margin: 0 auto 40px; font-weight: 300;
     }
     .page-hero-stats {
       display: flex; justify-content: center; gap: 0;
-      margin-top: 48px; flex-wrap: wrap;
-      border: 1px solid var(--border);
-      max-width: 680px; margin-left: auto; margin-right: auto;
+      flex-wrap: wrap; margin-top: 48px;
     }
-    .ph-stat {
-      flex: 1; min-width: 140px; padding: 24px 28px; text-align: center;
-      border-right: 1px solid var(--border); background: rgba(17,53,102,.1);
+    .page-hero-stats .stat {
+      padding: 24px 48px; border: 1px solid var(--border);
+      margin-left: -1px; text-align: center;
+      background: rgba(17,53,102,.1);
     }
-    .ph-stat:last-child { border-right: none; }
-    .ph-stat .ph-val {
+    .page-hero-stats .stat:first-child { margin-left: 0; }
+    .page-hero-stats .stat .s-val {
       font-family: 'Agatho', Georgia, serif;
-      font-size: 1.8rem; font-weight: 400; color: var(--gold); line-height: 1;
+      font-size: 2rem; font-weight: 400; color: var(--gold); line-height: 1;
     }
-    .ph-stat .ph-label {
+    .page-hero-stats .stat .s-lbl {
       font-size: .65rem; color: var(--grey-dark); text-transform: uppercase;
       letter-spacing: 1.5px; font-weight: 600; margin-top: 6px;
     }
 
-    /* ══════════ FILTER BAR ══════════ */
-    /* FIX: removed position:sticky so it does NOT scroll with page */
+    /* ══════════ FILTER BAR (from Code 2) ══════════ */
     .filter-bar {
       padding: 32px 0;
       background: var(--bg-section);
@@ -223,11 +222,11 @@
       border-color: rgba(255,185,30,.35);
     }
 
-    /* ══════════ EA GRID ══════════ */
+    /* ══════════ EA GRID (from Code 2) ═════════��� */
     .ea-section { padding: 80px 0 40px; }
     .ea-grid { display: flex; flex-direction: column; gap: 48px; }
 
-    /* ══════════ EA DETAIL CARD ══════════ */
+    /* ══════════ EA DETAIL CARD (from Code 2) ══════════ */
     .ea-card {
       background: var(--bg-section); border: 1px solid var(--border);
       position: relative; overflow: hidden; transition: border-color .4s ease;
@@ -241,7 +240,6 @@
     .ea-card:hover { border-color: rgba(255,185,30,.25); }
     .ea-card:hover::before { opacity: 1; }
 
-    /* FIX: balanced 50/50 columns instead of fixed 380px left */
     .ea-card-inner {
       display: grid; grid-template-columns: 1fr 1fr; gap: 0;
     }
@@ -266,13 +264,11 @@
       text-transform: uppercase; letter-spacing: 1.5px; border-radius: 2px;
       margin-bottom: 8px;
     }
-    /* FIX: EA name on one line */
     .ea-card-meta h2 {
       font-family: 'Agatho', Georgia, serif;
       font-size: 1.45rem; font-weight: 400; line-height: 1.15; margin-bottom: 4px;
       white-space: nowrap;
     }
-    /* FIX: strategy tag on one line */
     .ea-strategy-tag {
       font-size: .68rem; color: var(--gold); font-weight: 600;
       text-transform: uppercase; letter-spacing: 1.2px;
@@ -311,7 +307,6 @@
     }
     .ea-stat-cell .s-value.green { color: var(--green); }
 
-    /* FIX: Features list — no circle before checkmark */
     .ea-features-title {
       font-size: .7rem; font-weight: 700; text-transform: uppercase;
       letter-spacing: 2px; color: var(--grey-dark); margin-bottom: 16px;
@@ -323,7 +318,6 @@
       display: flex; align-items: flex-start; gap: 10px; line-height: 1.5;
     }
     .ea-features li:last-child { border-bottom: none; }
-    /* Removed ::before pseudo-element circle — checkmark icon only */
     .feat-check {
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; font-size: .75rem; color: var(--green); margin-top: 1px;
@@ -355,7 +349,7 @@
       color: #f87171;
     }
 
-    /* ══════════ COMPARISON TABLE ══════════ */
+    /* ══════════ COMPARISON TABLE (from Code 1) ══════════ */
     .comparison { padding: 100px 0; background: var(--bg-section); position: relative; }
     .comparison::before, .comparison::after {
       content: ''; position: absolute; left: 0; right: 0; height: 1px;
@@ -363,101 +357,57 @@
     }
     .comparison::before { top: 0; }
     .comparison::after { bottom: 0; }
-    .comp-table-wrap { overflow-x: auto; margin-top: 56px; }
-    .comp-table {
+    .comparison-header { text-align: center; margin-bottom: 56px; }
+    .comparison-table-wrap { overflow-x: auto; }
+    .comparison-table {
       width: 100%; border-collapse: collapse;
-      min-width: 640px;
+      font-size: .82rem; min-width: 780px;
     }
-    .comp-table th, .comp-table td {
-      padding: 18px 20px; text-align: center;
-      border-bottom: 1px solid var(--border-light);
-      font-size: .82rem;
+    .comparison-table thead th {
+      padding: 16px 20px; text-align: center;
+      background: rgba(17,53,102,.12);
+      border: 1px solid var(--border);
+      font-size: .7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--grey-dark);
     }
-    .comp-table thead th {
-      background: rgba(17,53,102,.2);
-      font-size: .65rem; text-transform: uppercase; letter-spacing: 2px;
-      color: var(--grey-dark); font-weight: 700;
+    .comparison-table thead th:first-child { text-align: left; }
+    .comparison-table thead th.highlight {
+      background: var(--gold-muted); color: var(--gold); border-color: rgba(255,185,30,.25);
     }
-    .comp-table thead th:first-child { text-align: left; }
-    .comp-table td:first-child {
-      text-align: left; color: var(--grey-light); font-weight: 500;
-      font-size: .8rem;
+    .comparison-table tbody tr { transition: background .2s; }
+    .comparison-table tbody tr:hover td { background: rgba(17,53,102,.12); }
+    .comparison-table tbody td {
+      padding: 16px 20px; text-align: center;
+      border: 1px solid var(--border); color: var(--grey-light);
+      font-weight: 400;
     }
-    .comp-table tbody tr:hover td { background: rgba(17,53,102,.12); }
-    .comp-table .check { color: var(--green); font-size: 1rem; }
-    .comp-table .cross { color: #f87171; font-size: 1rem; }
-    .comp-table .val-gold {
-      font-family: 'Agatho', Georgia, serif;
-      color: var(--gold); font-size: 1rem;
+    .comparison-table tbody td:first-child {
+      text-align: left; font-weight: 600; color: var(--white);
+      font-size: .78rem; text-transform: uppercase; letter-spacing: .5px;
     }
-    .comp-table .val-green {
-      font-family: 'Agatho', Georgia, serif;
-      color: var(--green); font-size: 1rem;
+    .comparison-table tbody td.highlight { background: rgba(255,185,30,.04); border-color: rgba(255,185,30,.15); }
+    .comparison-table .check { color: var(--green); font-size: 1rem; }
+    .comparison-table .cross { color: #5a6e8a; font-size: 1rem; }
+    .comparison-table .tag-gold {
+      display: inline-block; background: var(--gold-muted); color: var(--gold);
+      padding: 2px 10px; font-size: .62rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px; border-radius: 2px;
     }
 
-    /* ══════════ RESULTS SECTION ══════════ */
-    .results-section { padding: 100px 0; position: relative; }
-    .results-section::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border), transparent);
-    }
-    .results-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 2px; background: var(--border); border: 1px solid var(--border);
-      margin-top: 56px;
-    }
-    .result-card {
-      background: var(--bg-primary); padding: 44px 36px; transition: background .3s;
-    }
-    .result-card:hover { background: var(--bg-section); }
-    .result-card .r-val {
-      font-family: 'Agatho', Georgia, serif;
-      font-size: 2.8rem; font-weight: 400; color: var(--gold); line-height: 1;
-      margin-bottom: 8px;
-    }
-    .result-card .r-val.green { color: var(--green); }
-    .result-card .r-label { font-size: .75rem; color: var(--grey); font-weight: 500; margin-bottom: 16px; }
-    .result-card .r-desc { font-size: .82rem; color: var(--grey-dark); line-height: 1.7; font-weight: 300; }
-    .results-note {
-      margin-top: 32px; text-align: center;
-      font-size: .8rem; color: var(--grey-dark); font-weight: 400;
-    }
-    .results-note a { color: var(--gold); text-decoration: underline; }
-
-    /* ══════════ FAQ ══════════ */
-    .faq { padding: 100px 0; background: var(--bg-section); position: relative; }
-    .faq::before, .faq::after {
-      content: ''; position: absolute; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border), transparent);
-    }
-    .faq::before { top: 0; }
-    .faq::after { bottom: 0; }
-    .faq-list { margin-top: 56px; max-width: 860px; margin-left: auto; margin-right: auto; }
+    /* ══════════ FAQ (from Code 1) ══════════ */
+    .faq { padding: 100px 0; }
+    .faq-header { text-align: center; margin-bottom: 56px; }
+    .faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; background: var(--border); max-width: 1100px; margin: 0 auto; }
     .faq-item {
-      border-bottom: 1px solid var(--border);
+      background: var(--bg-primary); padding: 36px 40px;
+      transition: background .3s;
     }
-    .faq-q {
-      width: 100%; text-align: left; background: none; border: none;
-      padding: 24px 0; display: flex; justify-content: space-between; align-items: center;
-      gap: 20px; cursor: pointer; font-family: 'Montserrat', sans-serif;
-      font-size: .92rem; font-weight: 600; color: var(--white); transition: color .2s;
-    }
-    .faq-q:hover { color: var(--gold); }
-    .faq-q .faq-icon {
-      width: 24px; height: 24px; border-radius: 50%;
-      border: 1px solid rgba(255,185,30,.3);
-      display: flex; align-items: center; justify-content: center;
-      font-size: .8rem; color: var(--gold); flex-shrink: 0; transition: transform .3s;
-    }
-    .faq-item.open .faq-icon { transform: rotate(45deg); }
-    .faq-a {
-      font-size: .87rem; color: var(--grey); line-height: 1.8; font-weight: 300;
-      max-height: 0; overflow: hidden; transition: max-height .4s ease, padding .4s ease;
-      padding: 0;
-    }
-    .faq-item.open .faq-a { max-height: 300px; padding-bottom: 24px; }
+    .faq-item:hover { background: var(--bg-section); }
+    .faq-item h4 { font-size: .92rem; font-weight: 700; margin-bottom: 12px; letter-spacing: .2px; }
+    .faq-item p { font-size: .82rem; color: var(--grey); line-height: 1.8; font-weight: 300; }
+    .faq-item p a { color: var(--gold); text-decoration: underline; }
 
-    /* ══════════ CTA ══════════ */
+    /* ══════════ CTA (from Code 2) ══════════ */
     .cta {
       padding: 120px 0; background: var(--bg-section);
       position: relative; text-align: center;
@@ -551,16 +501,18 @@
     @media (max-width: 1024px) {
       .ea-card-inner { grid-template-columns: 1fr; }
       .ea-card-left { border-right: none; border-bottom: 1px solid var(--border); }
-      .results-grid { grid-template-columns: repeat(2, 1fr); }
+      .page-hero-stats .stat { padding: 20px 32px; }
     }
     @media (max-width: 768px) {
       .nav-links, .nav-actions { display: none; }
       .hamburger { display: block; }
       .container { padding: 0 20px; }
+      .ea-stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .faq-grid { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; gap: 40px; }
       .footer-bottom { flex-direction: column; text-align: center; }
-      .results-grid { grid-template-columns: 1fr; }
-      .ea-stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .page-hero-stats { flex-direction: column; align-items: center; }
+      .page-hero-stats .stat { width: 100%; max-width: 300px; margin-left: 0 !important; }
       .ea-card-meta h2 { white-space: normal; }
       .ea-strategy-tag { white-space: normal; }
       .nav-links.open {
@@ -603,37 +555,42 @@
     </div>
   </nav>
 
-  <!-- ════════════════════ PAGE HERO ════════════════════ -->
+  <!-- ════════════════════ PAGE HERO (Code 1) ════════════════════ -->
   <section class="page-hero">
     <div class="container">
       <div class="page-hero-badge">
         <span class="dot"></span>
-        Four Precision Algorithms
+        Four Precision Systems
       </div>
-      <h1>SwiftCap <span class="gold">Expert Advisors</span></h1>
-      <p>Institutional-grade trading systems engineered for prop firm challenges and personal capital growth. Each EA is purpose-built for a distinct market approach.</p>
+      <h1>
+        SwiftCap <span class="gold">Expert Advisors</span><br>
+        <span class="thin">Engineered to Perform</span>
+      </h1>
+      <p class="page-hero-desc">
+        Four distinct algorithmic trading systems — each built for a specific market approach and risk profile. All available on MQL5 Market with institutional-grade precision.
+      </p>
       <div class="page-hero-stats">
-        <div class="ph-stat">
-          <div class="ph-val">4</div>
-          <div class="ph-label">Algorithms</div>
+        <div class="stat">
+          <div class="s-val">4</div>
+          <div class="s-lbl">Trading Systems</div>
         </div>
-        <div class="ph-stat">
-          <div class="ph-val">MT4 &amp; MT5</div>
-          <div class="ph-label">Live, Verified Results</div>
+        <div class="stat">
+          <div class="s-val">MT4 &amp; MT5</div>
+          <div class="s-lbl">Platform Support</div>
         </div>
-        <div class="ph-stat">
-          <div class="ph-val">85%</div>
-          <div class="ph-label">Peak Win Rate</div>
+        <div class="stat">
+          <div class="s-val">+10–12%</div>
+          <div class="s-lbl">Avg Monthly Return</div>
         </div>
-        <div class="ph-stat">
-          <div class="ph-val">24/5</div>
-          <div class="ph-label">Automated</div>
+        <div class="stat">
+          <div class="s-val">&lt;8%</div>
+          <div class="s-lbl">Max Drawdown (Prop)</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ════════════════════ FILTER BAR ════════════════════ -->
+  <!-- ════════════════════ FILTER BAR (Code 2) ════════════════════ -->
   <div class="filter-bar">
     <div class="container">
       <div class="filter-tabs">
@@ -646,13 +603,13 @@
     </div>
   </div>
 
-  <!-- ════════════════════ EA GRID ════════════════════ -->
+  <!-- ════════════════════ EA CARDS (Code 2) ════════════════════ -->
   <section class="ea-section">
     <div class="container">
       <div class="ea-grid">
 
         <!-- ── SwiftCap Master EA ── -->
-        <div class="ea-card" data-tags="prop mt4 mt5">
+        <div class="ea-card" data-tags="prop personal mt4 mt5">
           <div class="ea-card-inner">
             <div class="ea-card-left">
               <div class="ea-card-header">
@@ -713,7 +670,7 @@
         </div>
 
         <!-- ── SwiftCap Breakout EA ── -->
-        <div class="ea-card" data-tags="prop mt4 mt5">
+        <div class="ea-card" data-tags="prop personal mt4 mt5">
           <div class="ea-card-inner">
             <div class="ea-card-left">
               <div class="ea-card-header">
@@ -835,7 +792,7 @@
         </div>
 
         <!-- ── SwiftCap Trinity EA ── -->
-        <div class="ea-card" data-tags="prop mt5">
+        <div class="ea-card" data-tags="prop personal mt5">
           <div class="ea-card-inner">
             <div class="ea-card-left">
               <div class="ea-card-header">
@@ -899,87 +856,103 @@
     </div>
   </section>
 
-  <!-- ════════════════════ COMPARISON TABLE ════════════════════ -->
+  <!-- ════════════════════ COMPARISON TABLE (Code 1) ════════════════════ -->
   <section class="comparison">
     <div class="container">
-      <div class="section-label center">Side-by-Side</div>
-      <h2 class="section-title text-center">Algorithm <span class="gold">Comparison</span></h2>
-      <div class="divider center"></div>
-      <p class="section-subtitle text-center mx-auto">Compare all four EAs across key performance and compatibility metrics to find the right fit for your trading goals.</p>
-      <div class="comp-table-wrap">
-        <table class="comp-table">
+      <div class="comparison-header">
+        <div class="section-label center">Side by Side</div>
+        <h2 class="section-title text-center">Compare <span class="gold">All EAs</span></h2>
+        <div class="divider center"></div>
+        <p class="section-subtitle text-center mx-auto">Use this table to select the right algorithm for your trading goal, risk profile, and platform.</p>
+      </div>
+      <div class="comparison-table-wrap">
+        <table class="comparison-table">
           <thead>
             <tr>
               <th>Feature</th>
               <th>Master EA</th>
               <th>Breakout EA</th>
               <th>Grid EA</th>
-              <th>Trinity EA</th>
+              <th class="highlight">Trinity EA</th>
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td>Strategy Type</td>
+              <td>Scalping</td>
+              <td>Breakout</td>
+              <td>Grid / DCA</td>
+              <td class="highlight"><span class="tag-gold">3-Layer Hybrid</span></td>
+            </tr>
             <tr>
               <td>Platform</td>
               <td>MT4 &amp; MT5</td>
               <td>MT4 &amp; MT5</td>
               <td>MT5 Only</td>
-              <td>MT5 Only</td>
+              <td class="highlight">MT5 Only</td>
+            </tr>
+            <tr>
+              <td>Prop Firm Compatible</td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="cross">✗</span></td>
+              <td class="highlight"><span class="check">✓</span></td>
             </tr>
             <tr>
               <td>Monthly Return</td>
-              <td class="val-green">+10.2%</td>
-              <td class="val-green">+12.4%</td>
-              <td class="val-green">+8%</td>
-              <td class="val-green">+11.6%</td>
+              <td>+10.2%</td>
+              <td>+12.4%</td>
+              <td>+8%</td>
+              <td class="highlight">+11.6%</td>
             </tr>
             <tr>
               <td>Max Drawdown</td>
               <td>5.8%</td>
               <td>7.2%</td>
               <td>14.5%</td>
-              <td>6.5%</td>
+              <td class="highlight">6.5%</td>
             </tr>
             <tr>
               <td>Win Rate</td>
-              <td class="val-green">85%</td>
-              <td class="val-green">65%</td>
-              <td class="val-green">82%</td>
-              <td class="val-green">68%</td>
-            </tr>
-            <tr>
-              <td>Prop Firm Safe</td>
-              <td><span class="check">✓</span></td>
-              <td><span class="check">✓</span></td>
-              <td><span class="cross">✗</span></td>
-              <td><span class="check">✓</span></td>
-            </tr>
-            <tr>
-              <td>Personal Account</td>
-              <td><span class="check">✓</span></td>
-              <td><span class="check">✓</span></td>
-              <td><span class="check">✓</span></td>
-              <td><span class="check">✓</span></td>
-            </tr>
-            <tr>
-              <td>Trailing Stop</td>
-              <td><span class="check">✓</span></td>
-              <td><span class="check">✓</span></td>
-              <td><span class="cross">✗</span></td>
-              <td><span class="check">✓</span></td>
+              <td>85%</td>
+              <td>65%</td>
+              <td>82%</td>
+              <td class="highlight">68%</td>
             </tr>
             <tr>
               <td>Timeframe</td>
               <td>5M</td>
               <td>M15</td>
               <td>M15</td>
-              <td>M15</td>
+              <td class="highlight">M15</td>
             </tr>
             <tr>
-              <td>Strategy Type</td>
-              <td>Scalping</td>
-              <td>Breakout</td>
-              <td>Grid / DCA</td>
-              <td>Hybrid 3-Layer</td>
+              <td>Pairs / Markets</td>
+              <td>4 Instruments</td>
+              <td>6 Instruments</td>
+              <td>3 Pairs</td>
+              <td class="highlight">Gold Specialist</td>
+            </tr>
+            <tr>
+              <td>News Filter</td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="cross">✗</span></td>
+              <td class="highlight"><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Best For</td>
+              <td>All-rounder</td>
+              <td>Prop Challenges</td>
+              <td>Personal Growth</td>
+              <td class="highlight"><span class="tag-gold">Advanced Traders</span></td>
+            </tr>
+            <tr>
+              <td>MQL5 Market</td>
+              <td><a href="https://www.mql5.com/en/market/product/141855" target="_blank" style="color:var(--gold);">Buy Now →</a></td>
+              <td><a href="https://www.mql5.com/en/market/product/150117" target="_blank" style="color:var(--gold);">Buy Now →</a></td>
+              <td><a href="https://www.mql5.com/en/market/product/164484" target="_blank" style="color:var(--gold);">Buy Now →</a></td>
+              <td class="highlight"><a href="https://www.mql5.com/en/market/product/165807" target="_blank" style="color:var(--gold);">Buy Now →</a></td>
             </tr>
           </tbody>
         </table>
@@ -987,90 +960,52 @@
     </div>
   </section>
 
-  <!-- ════════════════════ LIVE RESULTS ════════════════════ -->
-  <section class="results-section">
-    <div class="container">
-      <div class="section-label">Performance Data</div>
-      <h2 class="section-title">Live, <span class="gold">Verified Results</span></h2>
-      <div class="divider"></div>
-      <p class="section-subtitle">All performance statistics are sourced from live trading accounts. Results are tracked and publicly verifiable.</p>
-      <div class="results-grid">
-        <div class="result-card">
-          <div class="r-val green">+34%</div>
-          <div class="r-label">3-Month Account Growth</div>
-          <div class="r-desc">Breakout EA on personal GOLD account. Maximum drawdown recorded at under 6% throughout the period.</div>
-        </div>
-        <div class="result-card">
-          <div class="r-val">9 Days</div>
-          <div class="r-label">FTMO Phase 1 Pass</div>
-          <div class="r-desc">Master EA completed a $100K FTMO Phase 1 challenge in 9 trading days with full rule compliance.</div>
-        </div>
-        <div class="result-card">
-          <div class="r-val green">68%</div>
-          <div class="r-label">Trinity EA Win Rate</div>
-          <div class="r-desc">Trinity EA maintained a 68% win rate over 6 months of live GOLD trading with 6.5% max drawdown.</div>
-        </div>
-      </div>
-      <p class="results-note">
-        All live account results are tracked and verified on <a href="https://www.mql5.com/en/users/swiftcapeas/seller" target="_blank">MQL5 Market</a>. Past performance does not guarantee future results.
-      </p>
-    </div>
-  </section>
-
-  <!-- ════════════════════ FAQ ════════════════════ -->
+  <!-- ════════════════════ FAQ (Code 1) ════════════════════ -->
   <section class="faq">
     <div class="container">
-      <div class="section-label center">Common Questions</div>
-      <h2 class="section-title text-center">EA <span class="gold">FAQ</span></h2>
-      <div class="divider center"></div>
-      <div class="faq-list">
+      <div class="faq-header">
+        <div class="section-label center">Common Questions</div>
+        <h2 class="section-title text-center">EA <span class="gold">FAQ</span></h2>
+        <div class="divider center"></div>
+      </div>
+      <div class="faq-grid">
         <div class="faq-item">
-          <button class="faq-q">
-            Are these EAs compatible with my prop firm?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">Master EA, Breakout EA, and Trinity EA are all engineered with prop firm rules in mind — strict drawdown enforcement, no prohibited strategies, and clean execution. The Grid EA is not recommended for prop firms due to its DCA nature.</div>
+          <h4>Which EA is best for prop firm challenges?</h4>
+          <p>Both the Master EA and Breakout EA are purpose-built for prop firm environments. The Breakout EA leads on monthly returns (+12.4%) while the Master EA has the highest win rate (85%). Trinity EA is also prop firm compatible for advanced users.</p>
         </div>
         <div class="faq-item">
-          <button class="faq-q">
-            Which MT platform do I need?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">Master EA and Breakout EA support both MT4 and MT5. Grid EA and Trinity EA are MT5-only. All EAs are purchased and licensed through MQL5 Market and attach directly to your MetaTrader terminal.</div>
+          <h4>Do I need MT4 or MT5?</h4>
+          <p>Master EA and Breakout EA work on both MT4 and MT5. Grid EA and Trinity EA are MT5 only. We recommend MT5 for the most features and best performance across all our systems.</p>
         </div>
         <div class="faq-item">
-          <button class="faq-q">
-            How do I purchase and install an EA?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">Purchase is made through MQL5 Market. After purchase, the EA is available in your MQL5 account and can be launched directly inside MetaTrader via the Market tab. Full setup guides are available on our Guides page.</div>
+          <h4>How do I get the EAs after purchase?</h4>
+          <p>All EAs are licensed through <a href="https://www.mql5.com/en/users/swiftcapeas/seller" target="_blank">MQL5 Market</a>. After purchase, they appear in your MetaTrader platform automatically — no manual file transfers needed.</p>
         </div>
         <div class="faq-item">
-          <button class="faq-q">
-            What broker should I use?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">We recommend IC Markets or FP Markets for low-spread execution. Both are affiliated partners and offer institutional-grade conditions suitable for our EAs. A VPS is also recommended for 24/5 uptime — ForexVPS is our preferred provider.</div>
+          <h4>Can I run multiple EAs simultaneously?</h4>
+          <p>Yes. Many traders run Master EA and Breakout EA simultaneously on different instruments for diversified exposure. We recommend a minimum balance of $5,000 per EA for optimal performance. Join our <a href="https://discord.gg/gH3RJWRJKS" target="_blank">Discord</a> for multi-EA setup guides.</p>
         </div>
         <div class="faq-item">
-          <button class="faq-q">
-            Is there support available after purchase?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">Yes. All customers receive access to our Discord server where the development team provides live support, optimal settings, installation help, and real-time trade alerts. Join via the button in the navigation or footer.</div>
+          <h4>Why is Grid EA not prop firm compatible?</h4>
+          <p>Grid and DCA strategies stack multiple positions as price moves against the trade. This can breach prop firm drawdown rules during adverse market conditions. Grid EA is optimised exclusively for personal funded accounts with appropriate risk tolerance.</p>
         </div>
         <div class="faq-item">
-          <button class="faq-q">
-            How are results verified?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">All live account performance data is tracked and publicly available on the MQL5 Market profile. Results are from real trading accounts — not backtests. You can view the live records at our MQL5 seller page.</div>
+          <h4>What broker do you recommend?</h4>
+          <p>We recommend <a href="https://icmarkets.com/?camp=85950" target="_blank">IC Markets</a> or <a href="https://portal.fpmarkets.com/register?redir=stv&fpm-affiliate-utm-source=IB&fpm-affiliate-agt=60977" target="_blank">FP Markets</a> for tight spreads and fast execution — critical for scalping strategies like Master EA. Both are ECN brokers with raw spread accounts.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Is a VPS required?</h4>
+          <p>A VPS is strongly recommended to ensure 24/5 uptime without interruption. We partner with <a href="https://www.forexvps.net/?aff=67839" target="_blank">ForexVPS</a> for reliable, low-latency hosting optimised for MetaTrader. Setup guides are available in our Discord.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Where can I verify live performance?</h4>
+          <p>All live results are published on <a href="https://www.myfxbook.com/members/SwiftCapEAs" target="_blank">MyFXBook</a> with third-party verification. Real-time trade alerts and performance updates are also shared in our <a href="https://discord.gg/gH3RJWRJKS" target="_blank">Discord community</a>.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ════════════════════ CTA ════════════════════ -->
+  <!-- ════════════════════ CTA (Code 2) ════════════════════ -->
   <section class="cta">
     <div class="container">
       <img src="logo.png" alt="SwiftCap" class="cta-logo" />
@@ -1087,13 +1022,17 @@
   <footer>
     <div class="container">
       <div class="footer-grid">
+        <!-- Brand -->
         <div class="footer-brand">
           <div class="footer-logo">
             <img src="logo.png" alt="SwiftCap EAs" />
             <span class="footer-logo-text display-font">Swift<span class="f-gold">Cap</span> EAs</span>
           </div>
-          <p class="footer-desc">Institutional-grade algorithmic trading solutions. Precision-engineered Expert Advisors for prop firm challenges and personal capital growth.</p>
+          <p class="footer-desc">
+            Institutional-grade algorithmic trading solutions. Precision-engineered Expert Advisors for prop firm challenges and personal capital growth.
+          </p>
         </div>
+        <!-- Navigation -->
         <div class="footer-nav">
           <h5>Navigation</h5>
           <ul>
@@ -1104,6 +1043,7 @@
             <li><a href="contact.html">Contact</a></li>
           </ul>
         </div>
+        <!-- Contact -->
         <div class="footer-contact">
           <h5>Contact</h5>
           <div class="contact-item">
@@ -1133,6 +1073,7 @@
           </div>
         </div>
       </div>
+      <!-- Bottom Bar -->
       <div class="footer-bottom">
         <p>&copy; 2026 SwiftCap EAs. All rights reserved. Trading involves substantial risk. Past performance does not guarantee future results.</p>
         <div class="footer-socials">
@@ -1190,15 +1131,6 @@
       });
     });
 
-    // FAQ accordion
-    document.querySelectorAll('.faq-item').forEach(item => {
-      item.querySelector('.faq-q').addEventListener('click', () => {
-        const isOpen = item.classList.contains('open');
-        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-        if (!isOpen) item.classList.add('open');
-      });
-    });
-
     // Scroll animations
     const animObs = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -1209,10 +1141,10 @@
       });
     }, { threshold: 0.03 });
 
-    document.querySelectorAll('.ea-card, .result-card').forEach((el, i) => {
+    document.querySelectorAll('.ea-card, .faq-item').forEach((el, i) => {
       el.style.opacity = '0';
       el.style.transform = 'translateY(16px)';
-      el.style.transition = `opacity 0.4s ease ${i * 0.07}s, transform 0.4s ease ${i * 0.07}s`;
+      el.style.transition = `opacity 0.4s ease ${i * 0.06}s, transform 0.4s ease ${i * 0.06}s`;
       animObs.observe(el);
     });
   </script>
