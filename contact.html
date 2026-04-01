@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — SwiftCap EAs</title>
+  <meta name="description" content="Get in touch with the SwiftCap EAs team. Contact us for support, partnership enquiries, or general questions about our Expert Advisors." />
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ══════════════════════════════════════════════════
+       SwiftCap EAs — Contact Page
+       Brand: Deep Navy #113566 | Gold Ember #FFB91E | Pure White #FFFFFF
+    ══════════════════════════════════════════════════ */
+
+    :root {
+      --navy:         #113566;
+      --navy-deep:    #0b2340;
+      --navy-darker:  #071832;
+      --navy-light:   #1a4a8a;
+      --gold:         #FFB91E;
+      --gold-light:   #ffcb54;
+      --gold-dark:    #e0a010;
+      --gold-muted:   rgba(255,185,30,.12);
+      --white:        #FFFFFF;
+      --off-white:    #f4f6fa;
+      --grey:         #8a9bba;
+      --grey-light:   #b8c5d8;
+      --grey-dark:    #5a6e8a;
+      --bg-primary:   #060e1c;
+      --bg-section:   #0a1628;
+      --bg-card:      rgba(17,53,102,.15);
+      --border:       rgba(17,53,102,.3);
+      --border-light: rgba(255,255,255,.06);
+      --green:        #2dd4a8;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--white);
+      line-height: 1.65;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .display-font { font-family: 'Agatho', Georgia, 'Times New Roman', serif; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 48px; }
+
+    /* ── Buttons ──────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 16px 36px; border-radius: 4px; font-weight: 600;
+      font-size: .9rem; cursor: pointer; transition: all .3s ease;
+      border: none; font-family: 'Montserrat', sans-serif;
+      letter-spacing: .5px; text-transform: uppercase;
+    }
+    .btn-primary { background: var(--gold); color: var(--navy-deep); }
+    .btn-primary:hover {
+      background: var(--gold-light); transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(255,185,30,.25);
+    }
+    .btn-secondary {
+      background: transparent; border: 1.5px solid rgba(255,255,255,.25); color: var(--white);
+    }
+    .btn-secondary:hover {
+      border-color: var(--gold); color: var(--gold); background: rgba(255,185,30,.05);
+    }
+    .btn-outline-gold {
+      background: transparent; border: 1.5px solid rgba(255,185,30,.4); color: var(--gold);
+    }
+    .btn-outline-gold:hover { background: rgba(255,185,30,.08); border-color: var(--gold); }
+    .btn-sm { padding: 12px 24px; font-size: .8rem; }
+
+    /* ── Typography ───────────────────────────────── */
+    .section-label {
+      text-transform: uppercase; font-size: .7rem; font-weight: 700;
+      letter-spacing: 3px; color: var(--gold); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .section-label::before { content: ''; width: 32px; height: 1px; background: var(--gold); }
+    .section-label.center { justify-content: center; }
+    .section-label.center::after { content: ''; width: 32px; height: 1px; background: var(--gold); }
+    .section-title {
+      font-family: 'Agatho', Georgia, serif;
+      font-size: clamp(2rem, 4vw, 3rem); font-weight: 400;
+      line-height: 1.15; margin-bottom: 20px; letter-spacing: -.5px;
+    }
+    .section-subtitle {
+      color: var(--grey); font-size: 1rem; max-width: 680px;
+      line-height: 1.8; font-weight: 300;
+    }
+    .gold { color: var(--gold); }
+    .green { color: var(--green); }
+    .text-center { text-align: center; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+    .divider {
+      width: 60px; height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      margin: 24px 0;
+    }
+    .divider.center { margin: 24px auto; }
+
+    /* ══════════ NAVBAR ══════════ */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(6,14,28,.85); backdrop-filter: blur(20px) saturate(1.2);
+      border-bottom: 1px solid var(--border-light); transition: all .3s ease;
+    }
+    nav.scrolled { background: rgba(6,14,28,.95); box-shadow: 0 4px 30px rgba(0,0,0,.3); }
+    nav .container {
+      display: flex; align-items: center; justify-content: space-between; height: 76px;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 12px; }
+    .nav-logo img { width: 42px; height: 42px; border-radius: 6px; object-fit: cover; }
+    .nav-logo-text {
+      font-family: 'Agatho', Georgia, serif;
+      font-size: 1.35rem; font-weight: 400; letter-spacing: 1px;
+    }
+    .nav-logo-text .logo-gold { color: var(--gold); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-size: .8rem; font-weight: 500; color: var(--grey-light);
+      transition: color .3s; letter-spacing: .5px; text-transform: uppercase;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
+    .nav-actions .btn { padding: 10px 22px; font-size: .75rem; }
+    .hamburger {
+      display: none; background: none; border: none;
+      color: var(--white); font-size: 1.4rem; cursor: pointer;
+    }
+
+    /* ══════════ PAGE HERO ══════════ */
+    .page-hero {
+      position: relative; padding: 140px 0 80px; overflow: hidden;
+      background: var(--bg-primary);
+    }
+    .page-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 0%, rgba(17,53,102,.3) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 20%, rgba(255,185,30,.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .page-hero::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+    .page-hero .container { position: relative; z-index: 1; text-align: center; }
+    .page-hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--gold-muted); border: 1px solid rgba(255,185,30,.2);
+      padding: 8px 18px; border-radius: 2px;
+      font-size: .7rem; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 24px;
+    }
+    .page-hero-badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gold); animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .page-hero h1 {
+      font-family: 'Agatho', Georgia, serif;
+      font-size: clamp(2.6rem, 5vw, 4rem);
+      font-weight: 400; line-height: 1.08;
+      margin-bottom: 24px; letter-spacing: -1px;
+    }
+    .page-hero h1 .thin { font-weight: 300; color: var(--grey-light); }
+    .page-hero-desc {
+      color: var(--grey); font-size: 1.05rem; line-height: 1.85;
+      max-width: 620px; margin: 0 auto 0; font-weight: 300;
+    }
+
+    /* ══════════ CONTACT SECTION ══════════ */
+    .contact-section { padding: 100px 0; position: relative; }
+    .contact-section::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+    .contact-layout {
+      display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; margin-top: 0;
+    }
+
+    /* Left — Info Cards */
+    .contact-info { display: flex; flex-direction: column; gap: 24px; }
+
+    .contact-card {
+      background: var(--bg-section); border: 1px solid var(--border);
+      padding: 32px 36px; transition: all .4s ease; position: relative; overflow: hidden;
+    }
+    .contact-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      opacity: 0; transition: opacity .4s ease;
+    }
+    .contact-card:hover { border-color: rgba(255,185,30,.2); }
+    .contact-card:hover::before { opacity: 1; }
+    .contact-card-header { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+    .contact-card-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: rgba(17,53,102,.2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .contact-card-icon img { width: 22px; height: 22px; object-fit: contain; }
+    .contact-card-icon .cc-emoji { font-size: 1.1rem; }
+    .contact-card h4 { font-size: .92rem; font-weight: 700; letter-spacing: .2px; }
+    .contact-card p {
+      font-size: .82rem; color: var(--grey); line-height: 1.8; font-weight: 300;
+      margin-bottom: 16px;
+    }
+    .contact-card a.cc-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .8rem; font-weight: 600; color: var(--gold);
+      transition: color .2s; letter-spacing: .3px;
+    }
+    .contact-card a.cc-link:hover { color: var(--gold-light); }
+
+    /* Response time badges */
+    .response-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 2px;
+      font-size: .62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; margin-bottom: 12px;
+    }
+    .response-badge.fast {
+      background: rgba(45,212,168,.1); border: 1px solid rgba(45,212,168,.25);
+      color: var(--green);
+    }
+    .response-badge.standard {
+      background: var(--gold-muted); border: 1px solid rgba(255,185,30,.25);
+      color: var(--gold);
+    }
+
+    /* Social Links Row */
+    .social-row {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px;
+    }
+    .social-link {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg-section); border: 1px solid var(--border);
+      padding: 14px 20px; flex: 1; min-width: 140px;
+      transition: all .3s ease;
+    }
+    .social-link:hover { border-color: rgba(255,185,30,.25); background: rgba(17,53,102,.12); }
+    .social-link .sl-icon {
+      width: 32px; height: 32px; border-radius: 6px;
+      background: rgba(17,53,102,.2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .social-link .sl-icon img { width: 18px; height: 18px; object-fit: contain; }
+    .social-link .sl-text {
+      font-size: .75rem; font-weight: 600; color: var(--grey-light);
+      text-transform: uppercase; letter-spacing: .5px;
+    }
+
+    /* Right — Form */
+    .contact-form-wrap {
+      background: var(--bg-section); border: 1px solid var(--border);
+      padding: 48px; position: relative; overflow: hidden;
+    }
+    .contact-form-wrap::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 100%; height: 3px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+    }
+    .form-title {
+      font-family: 'Agatho', Georgia, serif;
+      font-size: 1.4rem; font-weight: 400; margin-bottom: 8px;
+    }
+    .form-subtitle {
+      font-size: .82rem; color: var(--grey); font-weight: 300;
+      line-height: 1.7; margin-bottom: 32px;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label {
+      font-size: .68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--grey-dark);
+    }
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%; padding: 14px 18px;
+      background: var(--bg-primary); border: 1px solid var(--border);
+      color: var(--white); font-family: 'Montserrat', sans-serif;
+      font-size: .85rem; font-weight: 400; transition: border-color .3s;
+      border-radius: 2px; outline: none;
+    }
+    .form-input::placeholder,
+    .form-textarea::placeholder {
+      color: var(--grey-dark); font-weight: 300;
+    }
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: rgba(255,185,30,.4);
+    }
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='%235a6e8a'%3E%3Cpath d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      cursor: pointer;
+    }
+    .form-select option { background: var(--bg-primary); color: var(--white); }
+    .form-textarea { resize: vertical; min-height: 140px; }
+    .form-submit {
+      width: 100%; padding: 16px; margin-top: 8px;
+      background: var(--gold); color: var(--navy-deep);
+      border: none; border-radius: 4px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: .85rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      cursor: pointer; transition: all .3s ease;
+    }
+    .form-submit:hover {
+      background: var(--gold-light); transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(255,185,30,.25);
+    }
+    .form-submit:disabled {
+      opacity: .6; cursor: not-allowed; transform: none;
+      box-shadow: none;
+    }
+    .form-note {
+      font-size: .72rem; color: var(--grey-dark); margin-top: 16px;
+      text-align: center; font-weight: 300; line-height: 1.6;
+    }
+
+    /* Success / Error Messages */
+    .form-message {
+      display: none; padding: 20px 24px; border-radius: 4px;
+      margin-top: 16px; font-size: .85rem; font-weight: 500; text-align: center;
+    }
+    .form-message.success {
+      background: rgba(45,212,168,.1); border: 1px solid rgba(45,212,168,.25);
+      color: var(--green); display: block;
+    }
+    .form-message.error {
+      background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25);
+      color: #f87171; display: block;
+    }
+
+    /* ══════════ FAQ ══════════ */
+    .faq { padding: 100px 0; background: var(--bg-section); position: relative; }
+    .faq::before, .faq::after {
+      content: ''; position: absolute; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+    .faq::before { top: 0; }
+    .faq::after { bottom: 0; }
+    .faq-header { text-align: center; margin-bottom: 56px; }
+    .faq-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 2px; background: var(--border); max-width: 1100px; margin: 0 auto;
+    }
+    .faq-item {
+      background: var(--bg-primary); padding: 36px 40px;
+      transition: background .3s;
+    }
+    .faq-item:hover { background: var(--bg-section); }
+    .faq-item h4 { font-size: .92rem; font-weight: 700; margin-bottom: 12px; letter-spacing: .2px; }
+    .faq-item p { font-size: .82rem; color: var(--grey); line-height: 1.8; font-weight: 300; }
+    .faq-item p a { color: var(--gold); text-decoration: underline; }
+
+    /* ══════════ CTA ══════════ */
+    .cta {
+      padding: 120px 0; background: var(--bg-section);
+      position: relative; text-align: center;
+    }
+    .cta::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+    .cta::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(17,53,102,.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta .container { position: relative; z-index: 1; }
+    .cta-logo {
+      width: 72px; height: 72px; border-radius: 16px;
+      margin: 0 auto 32px; box-shadow: 0 12px 40px rgba(255,185,30,.12);
+    }
+    .cta h2 {
+      font-family: 'Agatho', Georgia, serif;
+      font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 400; margin-bottom: 20px;
+    }
+    .cta p {
+      color: var(--grey); font-size: 1rem; max-width: 500px;
+      margin: 0 auto 40px; font-weight: 300; line-height: 1.8;
+    }
+    .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* ══════════ FOOTER ══════════ */
+    footer {
+      background: #050d1a; border-top: 1px solid var(--border); padding: 64px 0 40px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 60px; margin-bottom: 48px;
+    }
+    .footer-brand .footer-logo {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+    }
+    .footer-brand .footer-logo img { width: 44px; height: 44px; border-radius: 8px; }
+    .footer-brand .footer-logo-text {
+      font-family: 'Agatho', Georgia, serif; font-size: 1.3rem; letter-spacing: 1px;
+    }
+    .footer-brand .footer-logo-text .f-gold { color: var(--gold); }
+    .footer-brand .footer-desc {
+      font-size: .85rem; color: var(--grey); line-height: 1.8;
+      font-weight: 300; max-width: 320px;
+    }
+    .footer-nav h5 {
+      font-size: .7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 2px; color: var(--grey-dark); margin-bottom: 20px;
+    }
+    .footer-nav ul { list-style: none; }
+    .footer-nav ul li { margin-bottom: 12px; }
+    .footer-nav ul a { font-size: .85rem; color: var(--grey); font-weight: 400; transition: color .2s; }
+    .footer-nav ul a:hover { color: var(--gold); }
+    .footer-contact h5 {
+      font-size: .7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 2px; color: var(--grey-dark); margin-bottom: 20px;
+    }
+    .footer-contact .contact-item {
+      display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;
+    }
+    .footer-contact .contact-item .ci-icon {
+      width: 36px; height: 36px; border-radius: 4px;
+      background: rgba(17,53,102,.2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; flex-shrink: 0;
+    }
+    .footer-contact .contact-item .ci-label {
+      font-size: .72rem; color: var(--grey-dark); text-transform: uppercase;
+      letter-spacing: .5px; font-weight: 600;
+    }
+    .footer-contact .contact-item .ci-value { font-size: .85rem; color: var(--grey-light); font-weight: 400; }
+    .footer-contact .contact-item a.ci-value { transition: color .2s; }
+    .footer-contact .contact-item a.ci-value:hover { color: var(--gold); }
+    .footer-bottom {
+      border-top: 1px solid var(--border); padding-top: 28px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .footer-bottom p { font-size: .75rem; color: var(--grey-dark); font-weight: 400; }
+    .footer-bottom .footer-socials { display: flex; gap: 12px; }
+    .footer-bottom .footer-socials a {
+      width: 36px; height: 36px; border-radius: 4px;
+      background: rgba(17,53,102,.2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; color: var(--grey); transition: all .3s ease;
+    }
+    .footer-bottom .footer-socials a:hover {
+      border-color: var(--gold); color: var(--gold); background: rgba(255,185,30,.05);
+    }
+
+    /* ══════════ RESPONSIVE ══════════ */
+    @media (max-width: 1024px) {
+      .contact-layout { grid-template-columns: 1fr; gap: 40px; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-actions { display: none; }
+      .hamburger { display: block; }
+      .container { padding: 0 20px; }
+      .form-row { grid-template-columns: 1fr; }
+      .faq-grid { grid-template-columns: 1fr; }
+      .social-row { flex-direction: column; }
+      .contact-form-wrap { padding: 32px 24px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .nav-links.open {
+        display: flex; flex-direction: column;
+        position: absolute; top: 76px; left: 0; right: 0;
+        background: rgba(6,14,28,.97); backdrop-filter: blur(20px);
+        padding: 28px; gap: 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-actions.open {
+        display: flex; flex-direction: column;
+        position: absolute; top: calc(76px + 260px);
+        left: 0; right: 0; padding: 0 28px 28px;
+        background: rgba(6,14,28,.97); gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════════ NAVBAR ════════════════════ -->
+  <nav id="navbar">
+    <div class="container">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.png" alt="SwiftCap EAs" />
+        <span class="nav-logo-text display-font">Swift<span class="logo-gold">Cap</span> EAs</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="eas.html">EAs</a></li>
+        <li><a href="results.html">Results</a></li>
+        <li><a href="guides.html">Guides</a></li>
+        <li><a href="contact.html" class="active">Contact</a></li>
+      </ul>
+      <div class="nav-actions" id="navActions">
+        <a href="https://discord.gg/gH3RJWRJKS" target="_blank" class="btn btn-secondary btn-sm">Join Discord</a>
+        <a href="https://www.mql5.com/en/users/swiftcapeas/seller" target="_blank" class="btn btn-primary btn-sm">Get Started →</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+    </div>
+  </nav>
+
+  <!-- ════════════════════ PAGE HERO ════════════════════ -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero-badge">
+        <span class="dot"></span>
+        Get In Touch
+      </div>
+      <h1>
+        Contact <span class="gold">SwiftCap</span><br>
+        <span class="thin">We're Here to Help</span>
+      </h1>
+      <p class="page-hero-desc">
+        Have a question about our Expert Advisors, need setup assistance, or interested in partnerships? Reach out through any channel below and we'll get back to you promptly.
+      </p>
+    </div>
+  </section>
+
+  <!-- ════════════════════ CONTACT SECTION ════════════════════ -->
+  <section class="contact-section">
+    <div class="container">
+      <div class="contact-layout">
+
+        <!-- LEFT — Contact Info -->
+        <div class="contact-info">
+
+          <!-- Discord -->
+          <div class="contact-card">
+            <div class="response-badge fast">⚡ Fastest Response</div>
+            <div class="contact-card-header">
+              <div class="contact-card-icon">
+                <img src="discord-banner.png" alt="Discord" />
+              </div>
+              <h4>Discord Community</h4>
+            </div>
+            <p>Join our active Discord server for real-time support, live trade alerts, installation help, and direct access to the development team. This is the fastest way to get help.</p>
+            <a href="https://discord.gg/gH3RJWRJKS" target="_blank" class="cc-link">Join Discord Server →</a>
+          </div>
+
+          <!-- Email -->
+          <div class="contact-card">
+            <div class="response-badge standard">Within 24 Hours</div>
+            <div class="contact-card-header">
+              <div class="contact-card-icon">
+                <span class="cc-emoji">✉</span>
+              </div>
+              <h4>Email Support</h4>
+            </div>
+            <p>For detailed enquiries, partnership proposals, or issues that require thorough investigation. We respond to all emails within 24 hours on business days.</p>
+            <a href="mailto:swiftcapeas@gmail.com" class="cc-link">swiftcapeas@gmail.com →</a>
+          </div>
+
+          <!-- MQL5 -->
+          <div class="contact-card">
+            <div class="response-badge standard">Marketplace Support</div>
+            <div class="contact-card-header">
+              <div class="contact-card-icon">
+                <img src="mql5.png" alt="MQL5" />
+              </div>
+              <h4>MQL5 Market</h4>
+            </div>
+            <p>Purchase support, license activations, and product reviews are handled directly through MQL5 Market. Visit our seller page for all available products and reviews.</p>
+            <a href="https://www.mql5.com/en/users/swiftcapeas/seller" target="_blank" class="cc-link">Visit MQL5 Profile →</a>
+          </div>
+
+          <!-- Social Links -->
+          <div class="social-row">
+            <a href="https://www.youtube.com/@SwiftCapEAs" target="_blank" class="social-link">
+              <div class="sl-icon">
+                <img src="youtube-banner.png" alt="YouTube" />
+              </div>
+              <span class="sl-text">YouTube</span>
+            </a>
+            <a href="https://www.instagram.com/swiftcapeas/" target="_blank" class="social-link">
+              <div class="sl-icon">
+                <img src="Instagram-banner.png" alt="Instagram" />
+              </div>
+              <span class="sl-text">Instagram</span>
+            </a>
+            <a href="https://www.myfxbook.com/members/SwiftCapEAs" target="_blank" class="social-link">
+              <div class="sl-icon">
+                <img src="myfxbook.png" alt="MyFXBook" />
+              </div>
+              <span class="sl-text">MyFXBook</span>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- RIGHT — Contact Form -->
+        <div class="contact-form-wrap">
+          <h3 class="form-title display-font">Send Us a <span class="gold">Message</span></h3>
+          <p class="form-subtitle">Fill out the form below and we'll get back to you as soon as possible. For urgent support, use Discord.</p>
+
+          <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+
+            <!-- Web3Forms Access Key -->
+            <input type="hidden" name="access_key" value="9ce8004e-10d3-40f1-8512-93f31365f3c3" />
+
+            <!-- Honeypot for spam prevention -->
+            <input type="checkbox" name="botcheck" class="hidden" style="display:none;" />
+
+            <!-- Redirect (optional — remove if you want to stay on same page) -->
+            <input type="hidden" name="redirect" value="" />
+
+            <!-- Subject line in email -->
+            <input type="hidden" name="subject" value="New Contact Form Submission — SwiftCap EAs" />
+
+            <!-- From name in email -->
+            <input type="hidden" name="from_name" value="SwiftCap EAs Website" />
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="firstName">First Name *</label>
+                <input type="text" id="firstName" name="first_name" class="form-input" placeholder="John" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="lastName">Last Name *</label>
+                <input type="text" id="lastName" name="last_name" class="form-input" placeholder="Doe" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="email">Email Address *</label>
+              <input type="email" id="email" name="email" class="form-input" placeholder="john@example.com" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="subject">Subject</label>
+              <select id="subject" name="enquiry_type" class="form-select">
+                <option value="General Enquiry">General Enquiry</option>
+                <option value="EA Setup Help">EA Setup Help</option>
+                <option value="Purchase Support">Purchase Support</option>
+                <option value="Bug Report">Bug Report</option>
+                <option value="Partnership / Affiliate">Partnership / Affiliate</option>
+                <option value="VPS / Broker Question">VPS / Broker Question</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ea">Which EA? (Optional)</label>
+              <select id="ea" name="ea_product" class="form-select">
+                <option value="Not Specified">Select an EA</option>
+                <option value="Master EA">SwiftCap Master EA</option>
+                <option value="Breakout EA">SwiftCap Breakout EA</option>
+                <option value="Grid EA">SwiftCap Grid EA</option>
+                <option value="Trinity EA">SwiftCap Trinity EA</option>
+                <option value="Multiple EAs">Multiple EAs</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="message">Message *</label>
+              <textarea id="message" name="message" class="form-textarea" placeholder="Describe your question or issue in detail..." required></textarea>
+            </div>
+
+            <button type="submit" class="form-submit" id="submitBtn">Send Message →</button>
+
+            <div id="formResult" class="form-message"></div>
+
+            <p class="form-note">Your information is secure and will never be shared with third parties. For fastest support, join our <a href="https://discord.gg/gH3RJWRJKS" target="_blank" style="color:var(--gold);text-decoration:underline;">Discord server</a>.</p>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════ FAQ ════════════════════ -->
+  <section class="faq">
+    <div class="container">
+      <div class="faq-header">
+        <div class="section-label center">Common Questions</div>
+        <h2 class="section-title text-center">Contact <span class="gold">FAQ</span></h2>
+        <div class="divider center"></div>
+      </div>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>What is the fastest way to get support?</h4>
+          <p>Our <a href="https://discord.gg/gH3RJWRJKS" target="_blank">Discord server</a> is the fastest channel — responses typically within minutes during market hours. The development team and community are both active and ready to help with setup, troubleshooting, and optimisation.</p>
+        </div>
+        <div class="faq-item">
+          <h4>How long do email replies take?</h4>
+          <p>We respond to all emails within 24 hours on business days. For urgent issues — especially during live trading — we recommend Discord for real-time assistance rather than email.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Can I request a custom EA or modification?</h4>
+          <p>We consider custom development requests on a case-by-case basis. Please describe your requirements using the contact form above with "Partnership / Affiliate" as the subject, and our team will evaluate feasibility.</p>
+        </div>
+        <div class="faq-item">
+          <h4>How do I report a bug or issue?</h4>
+          <p>Use the contact form with "Bug Report" selected as the subject. Include your EA name, MetaTrader version, broker, and a detailed description of the issue. Screenshots or journal logs are extremely helpful for diagnosis.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Do you offer affiliate or partnership programmes?</h4>
+          <p>Yes. We have affiliate partnerships for brokers, VPS providers, and content creators. If you're interested in collaborating, reach out via the form above or contact us directly at <a href="mailto:swiftcapeas@gmail.com">swiftcapeas@gmail.com</a>.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Where can I leave a review?</h4>
+          <p>Product reviews can be left directly on our <a href="https://www.mql5.com/en/users/swiftcapeas/seller" target="_blank">MQL5 Market seller page</a>. Your feedback helps other traders make informed decisions and helps us improve our products.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════ CTA ════════════════════ -->
+  <section class="cta">
+    <div class="container">
+      <img src="logo.png" alt="SwiftCap" class="cta-logo" />
+      <h2 class="display-font">Ready to Trade With <span class="gold">Precision</span></h2>
+      <p>Select your algorithm, deploy in minutes, and let institutional-grade logic handle the rest.</p>
+      <div class="cta-buttons">
+        <a href="https://www.mql5.com/en/users/swiftcapeas/seller" target="_blank" class="btn btn-primary">Browse on MQL5 →</a>
+        <a href="https://discord.gg/gH3RJWRJKS" target="_blank" class="btn btn-secondary">Join Discord</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════ FOOTER ════════════════════ -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <img src="logo.png" alt="SwiftCap EAs" />
+            <span class="footer-logo-text display-font">Swift<span class="f-gold">Cap</span> EAs</span>
+          </div>
+          <p class="footer-desc">
+            Institutional-grade algorithmic trading solutions. Precision-engineered Expert Advisors for prop firm challenges and personal capital growth.
+          </p>
+        </div>
+        <div class="footer-nav">
+          <h5>Navigation</h5>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="eas.html">Expert Advisors</a></li>
+            <li><a href="results.html">Live Results</a></li>
+            <li><a href="guides.html">Setup Guides</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h5>Contact</h5>
+          <div class="contact-item">
+            <div class="ci-icon">✉</div>
+            <div>
+              <div class="ci-label">Email</div>
+              <a href="mailto:swiftcapeas@gmail.com" class="ci-value">swiftcapeas@gmail.com</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="ci-icon">
+              <img src="discord-banner.png" alt="Discord" style="width:20px;height:20px;object-fit:contain;" />
+            </div>
+            <div>
+              <div class="ci-label">Discord</div>
+              <a href="https://discord.gg/gH3RJWRJKS" target="_blank" class="ci-value">Join our server for live support</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="ci-icon">
+              <img src="mql5.png" alt="MQL5" style="width:20px;height:20px;object-fit:contain;" />
+            </div>
+            <div>
+              <div class="ci-label">Marketplace</div>
+              <a href="https://www.mql5.com/en/users/swiftcapeas/seller" target="_blank" class="ci-value">Available on MQL5 Market</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 SwiftCap EAs. All rights reserved. Trading involves substantial risk. Past performance does not guarantee future results.</p>
+        <div class="footer-socials">
+          <a href="https://discord.gg/gH3RJWRJKS" target="_blank" aria-label="Discord">
+            <img src="discord-banner.png" alt="Discord" style="width:18px;height:18px;object-fit:contain;" />
+          </a>
+          <a href="https://www.youtube.com/@SwiftCapEAs" target="_blank" aria-label="YouTube">
+            <img src="youtube-banner.png" alt="YouTube" style="width:18px;height:18px;object-fit:contain;" />
+          </a>
+          <a href="https://www.instagram.com/swiftcapeas/" target="_blank" aria-label="Instagram">
+            <img src="Instagram-banner.png" alt="Instagram" style="width:18px;height:18px;object-fit:contain;" />
+          </a>
+          <a href="https://www.myfxbook.com/members/SwiftCapEAs" target="_blank" aria-label="MyFXBook">
+            <img src="myfxbook.png" alt="MyFXBook" style="width:18px;height:18px;object-fit:contain;" />
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ════════════════════ JAVASCRIPT ════════════════════ -->
+  <script>
+    // Navbar scroll
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // Mobile menu
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('open');
+      document.getElementById('navActions').classList.toggle('open');
+    });
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('open');
+        document.getElementById('navActions').classList.remove('open');
+      });
+    });
+
+    // Contact Form Submission (Web3Forms with AJAX)
+    const form = document.getElementById('contactForm');
+    const resultDiv = document.getElementById('formResult');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      // Disable button during submission
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+      resultDiv.className = 'form-message';
+      resultDiv.style.display = 'none';
+
+      try {
+        const formData = new FormData(form);
+        const object = Object.fromEntries(formData);
+        const json = JSON.stringify(object);
+
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: json
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          resultDiv.className = 'form-message success';
+          resultDiv.innerHTML = '✓ Message sent successfully! We\'ll get back to you within 24 hours.';
+          form.reset();
+        } else {
+          resultDiv.className = 'form-message error';
+          resultDiv.innerHTML = '✗ Something went wrong. Please try again or contact us via Discord.';
+        }
+      } catch (error) {
+        resultDiv.className = 'form-message error';
+        resultDiv.innerHTML = '✗ Network error. Please check your connection and try again.';
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Message →';
+    });
+
+    // Scroll animations
+    const animObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.03 });
+
+    document.querySelectorAll(
+      '.contact-card, .social-link, .contact-form-wrap, .faq-item'
+    ).forEach((el, i) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(16px)';
+      el.style.transition = `opacity 0.4s ease ${i * 0.06}s, transform 0.4s ease ${i * 0.06}s`;
+      animObs.observe(el);
+    });
+  </script>
+
+</body>
+</html>
