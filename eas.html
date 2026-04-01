@@ -198,14 +198,14 @@
     }
 
     /* ══════════ FILTER BAR ══════════ */
+    /* FIX: removed position:sticky so it does NOT scroll with page */
     .filter-bar {
       padding: 32px 0;
       background: var(--bg-section);
       border-bottom: 1px solid var(--border-light);
-      position: sticky; top: 76px; z-index: 50;
     }
     .filter-bar .container {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; justify-content: center;
       gap: 20px; flex-wrap: wrap;
     }
     .filter-tabs { display: flex; gap: 4px; }
@@ -221,9 +221,6 @@
     .filter-tab.active {
       background: var(--gold-muted); color: var(--gold);
       border-color: rgba(255,185,30,.35);
-    }
-    .filter-info {
-      font-size: .78rem; color: var(--grey-dark); font-weight: 500;
     }
 
     /* ══════════ EA GRID ══════════ */
@@ -244,13 +241,14 @@
     .ea-card:hover { border-color: rgba(255,185,30,.25); }
     .ea-card:hover::before { opacity: 1; }
 
+    /* FIX: balanced 50/50 columns instead of fixed 380px left */
     .ea-card-inner {
-      display: grid; grid-template-columns: 380px 1fr; gap: 0;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
     }
 
     /* Left column */
     .ea-card-left {
-      padding: 48px 40px;
+      padding: 48px 44px;
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column;
     }
@@ -268,13 +266,17 @@
       text-transform: uppercase; letter-spacing: 1.5px; border-radius: 2px;
       margin-bottom: 8px;
     }
+    /* FIX: EA name on one line */
     .ea-card-meta h2 {
       font-family: 'Agatho', Georgia, serif;
-      font-size: 1.55rem; font-weight: 400; line-height: 1.1; margin-bottom: 6px;
+      font-size: 1.45rem; font-weight: 400; line-height: 1.15; margin-bottom: 4px;
+      white-space: nowrap;
     }
+    /* FIX: strategy tag on one line */
     .ea-strategy-tag {
-      font-size: .7rem; color: var(--gold); font-weight: 600;
-      text-transform: uppercase; letter-spacing: 1.5px;
+      font-size: .68rem; color: var(--gold); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 1.2px;
+      white-space: nowrap;
     }
     .ea-desc {
       font-size: .88rem; color: var(--grey); line-height: 1.8;
@@ -290,7 +292,7 @@
     .ea-card-actions .btn { flex: 1; justify-content: center; min-width: 140px; }
 
     /* Right column */
-    .ea-card-right { padding: 48px 40px; }
+    .ea-card-right { padding: 48px 44px; }
     .ea-stats-grid {
       display: grid; grid-template-columns: repeat(4, 1fr);
       gap: 1px; background: var(--border); margin-bottom: 36px;
@@ -309,7 +311,7 @@
     }
     .ea-stat-cell .s-value.green { color: var(--green); }
 
-    /* Features list */
+    /* FIX: Features list — no circle before checkmark */
     .ea-features-title {
       font-size: .7rem; font-weight: 700; text-transform: uppercase;
       letter-spacing: 2px; color: var(--grey-dark); margin-bottom: 16px;
@@ -318,20 +320,14 @@
     .ea-features li {
       font-size: .85rem; color: var(--grey-light); font-weight: 300;
       padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.04);
-      display: flex; align-items: flex-start; gap: 12px; line-height: 1.5;
+      display: flex; align-items: flex-start; gap: 10px; line-height: 1.5;
     }
     .ea-features li:last-child { border-bottom: none; }
-    .ea-features li::before {
-      content: ''; width: 16px; height: 16px; border-radius: 50%;
-      background: rgba(255,185,30,.1); border: 1px solid rgba(255,185,30,.25);
-      flex-shrink: 0; margin-top: 1px;
-      display: flex; align-items: center; justify-content: center;
-    }
+    /* Removed ::before pseudo-element circle — checkmark icon only */
     .feat-check {
-      width: 16px; height: 16px; border-radius: 50%;
-      background: rgba(45,212,168,.1); border: 1px solid rgba(45,212,168,.3);
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; font-size: .6rem; color: var(--green); margin-top: 1px;
+      flex-shrink: 0; font-size: .75rem; color: var(--green); margin-top: 1px;
+      width: 16px;
     }
 
     /* Compatibility row */
@@ -367,62 +363,101 @@
     }
     .comparison::before { top: 0; }
     .comparison::after { bottom: 0; }
-    .comp-table-wrap { margin-top: 56px; overflow-x: auto; }
+    .comp-table-wrap { overflow-x: auto; margin-top: 56px; }
     .comp-table {
       width: 100%; border-collapse: collapse;
-      font-size: .85rem;
+      min-width: 640px;
     }
-    .comp-table thead tr {
+    .comp-table th, .comp-table td {
+      padding: 18px 20px; text-align: center;
+      border-bottom: 1px solid var(--border-light);
+      font-size: .82rem;
+    }
+    .comp-table thead th {
       background: rgba(17,53,102,.2);
+      font-size: .65rem; text-transform: uppercase; letter-spacing: 2px;
+      color: var(--grey-dark); font-weight: 700;
     }
-    .comp-table th {
-      padding: 18px 20px; text-align: left;
-      font-size: .7rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 1.5px; color: var(--grey-dark);
-      border-bottom: 1px solid var(--border);
+    .comp-table thead th:first-child { text-align: left; }
+    .comp-table td:first-child {
+      text-align: left; color: var(--grey-light); font-weight: 500;
+      font-size: .8rem;
     }
-    .comp-table th:first-child { width: 200px; }
-    .comp-table th.ea-col { text-align: center; color: var(--gold); }
-    .comp-table td {
-      padding: 16px 20px;
-      border-bottom: 1px solid rgba(255,255,255,.04);
-      color: var(--grey-light); vertical-align: middle;
-    }
-    .comp-table td:first-child { color: var(--grey-dark); font-weight: 600; font-size: .78rem; text-transform: uppercase; letter-spacing: .5px; }
-    .comp-table td.ea-col { text-align: center; }
     .comp-table tbody tr:hover td { background: rgba(17,53,102,.12); }
-    .comp-table .val-green { color: var(--green); font-weight: 600; }
-    .comp-table .val-gold { color: var(--gold); font-weight: 600; }
     .comp-table .check { color: var(--green); font-size: 1rem; }
     .comp-table .cross { color: #f87171; font-size: 1rem; }
-    .comp-table .ea-name-cell {
-      display: flex; align-items: center; gap: 10px;
+    .comp-table .val-gold {
+      font-family: 'Agatho', Georgia, serif;
+      color: var(--gold); font-size: 1rem;
     }
-    .comp-table .ea-name-cell img { width: 28px; height: 28px; border-radius: 6px; }
+    .comp-table .val-green {
+      font-family: 'Agatho', Georgia, serif;
+      color: var(--green); font-size: 1rem;
+    }
+
+    /* ══════════ RESULTS SECTION ══════════ */
+    .results-section { padding: 100px 0; position: relative; }
+    .results-section::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+    .results-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 2px; background: var(--border); border: 1px solid var(--border);
+      margin-top: 56px;
+    }
+    .result-card {
+      background: var(--bg-primary); padding: 44px 36px; transition: background .3s;
+    }
+    .result-card:hover { background: var(--bg-section); }
+    .result-card .r-val {
+      font-family: 'Agatho', Georgia, serif;
+      font-size: 2.8rem; font-weight: 400; color: var(--gold); line-height: 1;
+      margin-bottom: 8px;
+    }
+    .result-card .r-val.green { color: var(--green); }
+    .result-card .r-label { font-size: .75rem; color: var(--grey); font-weight: 500; margin-bottom: 16px; }
+    .result-card .r-desc { font-size: .82rem; color: var(--grey-dark); line-height: 1.7; font-weight: 300; }
+    .results-note {
+      margin-top: 32px; text-align: center;
+      font-size: .8rem; color: var(--grey-dark); font-weight: 400;
+    }
+    .results-note a { color: var(--gold); text-decoration: underline; }
 
     /* ══════════ FAQ ══════════ */
-    .faq { padding: 100px 0; position: relative; }
-    .faq-grid {
-      display: grid; grid-template-columns: repeat(2, 1fr);
-      gap: 2px; margin-top: 56px; background: var(--border);
-      border: 1px solid var(--border);
+    .faq { padding: 100px 0; background: var(--bg-section); position: relative; }
+    .faq::before, .faq::after {
+      content: ''; position: absolute; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
     }
+    .faq::before { top: 0; }
+    .faq::after { bottom: 0; }
+    .faq-list { margin-top: 56px; max-width: 860px; margin-left: auto; margin-right: auto; }
     .faq-item {
-      background: var(--bg-primary); padding: 36px 40px;
-      transition: background .3s ease; cursor: default;
+      border-bottom: 1px solid var(--border);
     }
-    .faq-item:hover { background: var(--bg-section); }
-    .faq-item h4 {
-      font-size: .92rem; font-weight: 700; margin-bottom: 12px;
-      letter-spacing: .2px; display: flex; align-items: flex-start; gap: 14px;
+    .faq-q {
+      width: 100%; text-align: left; background: none; border: none;
+      padding: 24px 0; display: flex; justify-content: space-between; align-items: center;
+      gap: 20px; cursor: pointer; font-family: 'Montserrat', sans-serif;
+      font-size: .92rem; font-weight: 600; color: var(--white); transition: color .2s;
     }
-    .faq-item h4 .q-num {
-      font-family: 'Agatho', Georgia, serif;
-      font-size: 1.2rem; color: rgba(255,185,30,.4); line-height: 1; flex-shrink: 0;
+    .faq-q:hover { color: var(--gold); }
+    .faq-q .faq-icon {
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 1px solid rgba(255,185,30,.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .8rem; color: var(--gold); flex-shrink: 0; transition: transform .3s;
     }
-    .faq-item p { font-size: .85rem; color: var(--grey); line-height: 1.85; font-weight: 300; padding-left: 30px; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-a {
+      font-size: .87rem; color: var(--grey); line-height: 1.8; font-weight: 300;
+      max-height: 0; overflow: hidden; transition: max-height .4s ease, padding .4s ease;
+      padding: 0;
+    }
+    .faq-item.open .faq-a { max-height: 300px; padding-bottom: 24px; }
 
-    /* ══════════ CTA ═════��════ */
+    /* ══════════ CTA ══════════ */
     .cta {
       padding: 120px 0; background: var(--bg-section);
       position: relative; text-align: center;
@@ -513,14 +548,10 @@
     }
 
     /* ══════════ RESPONSIVE ══════════ */
-    @media (max-width: 1100px) {
+    @media (max-width: 1024px) {
       .ea-card-inner { grid-template-columns: 1fr; }
       .ea-card-left { border-right: none; border-bottom: 1px solid var(--border); }
-      .ea-stats-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 1024px) {
-      .faq-grid { grid-template-columns: 1fr; }
-      .page-hero-stats { max-width: 100%; }
+      .results-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 768px) {
       .nav-links, .nav-actions { display: none; }
@@ -528,12 +559,10 @@
       .container { padding: 0 20px; }
       .footer-grid { grid-template-columns: 1fr; gap: 40px; }
       .footer-bottom { flex-direction: column; text-align: center; }
-      .ea-card-left, .ea-card-right { padding: 28px 24px; }
-      .page-hero { padding: 130px 0 60px; }
-      .ph-stat { min-width: 50%; }
-      .comp-table { font-size: .78rem; }
-      .comp-table th, .comp-table td { padding: 12px 10px; }
-      .filter-bar .container { flex-direction: column; align-items: flex-start; }
+      .results-grid { grid-template-columns: 1fr; }
+      .ea-stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .ea-card-meta h2 { white-space: normal; }
+      .ea-strategy-tag { white-space: normal; }
       .nav-links.open {
         display: flex; flex-direction: column;
         position: absolute; top: 76px; left: 0; right: 0;
@@ -579,15 +608,10 @@
     <div class="container">
       <div class="page-hero-badge">
         <span class="dot"></span>
-        Four Institutional Algorithms
+        Four Precision Algorithms
       </div>
-      <h1 class="display-font">
-        The SwiftCap<br>
-        <span class="gold">Expert Advisor Suite</span>
-      </h1>
-      <p>
-        Every EA is precision-engineered for a distinct market approach — scalping, breakout, grid, and hybrid multi-layer. All tested on live capital. All available on MQL5 Market.
-      </p>
+      <h1>SwiftCap <span class="gold">Expert Advisors</span></h1>
+      <p>Institutional-grade trading systems engineered for prop firm challenges and personal capital growth. Each EA is purpose-built for a distinct market approach.</p>
       <div class="page-hero-stats">
         <div class="ph-stat">
           <div class="ph-val">4</div>
@@ -595,40 +619,40 @@
         </div>
         <div class="ph-stat">
           <div class="ph-val">MT4 &amp; MT5</div>
-          <div class="ph-label">Platforms</div>
+          <div class="ph-label">Live, Verified Results</div>
         </div>
         <div class="ph-stat">
           <div class="ph-val">85%</div>
           <div class="ph-label">Peak Win Rate</div>
         </div>
         <div class="ph-stat">
-          <div class="ph-val">Live</div>
-          <div class="ph-label">Verified Results</div>
+          <div class="ph-val">24/5</div>
+          <div class="ph-label">Automated</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ════════════════════ FILTER BAR ════════════════════ -->
-  <div class="filter-bar" id="filterBar">
+  <div class="filter-bar">
     <div class="container">
       <div class="filter-tabs">
         <button class="filter-tab active" data-filter="all">All EAs</button>
         <button class="filter-tab" data-filter="prop">Prop Firm</button>
-        <button class="filter-tab" data-filter="personal">Personal Accounts</button>
-        <button class="filter-tab" data-filter="mt4">MT4 Compatible</button>
+        <button class="filter-tab" data-filter="personal">Personal Account</button>
+        <button class="filter-tab" data-filter="mt4">MT4</button>
+        <button class="filter-tab" data-filter="mt5">MT5</button>
       </div>
-      <span class="filter-info">Showing <span id="filterCount">4</span> of 4 algorithms</span>
     </div>
   </div>
 
-  <!-- ════════════════════ EA CARDS ════════════════════ -->
+  <!-- ════════════════════ EA GRID ════════════════════ -->
   <section class="ea-section">
     <div class="container">
-      <div class="ea-grid" id="eaGrid">
+      <div class="ea-grid">
 
         <!-- ── SwiftCap Master EA ── -->
-        <div class="ea-card" data-tags="prop mt4 personal">
+        <div class="ea-card" data-tags="prop mt4 mt5">
           <div class="ea-card-inner">
             <div class="ea-card-left">
               <div class="ea-card-header">
@@ -641,9 +665,7 @@
                   <div class="ea-strategy-tag">Scalping Strategy • MT4 &amp; MT5</div>
                 </div>
               </div>
-              <p class="ea-desc">
-                Designed to operate across high-volatility markets including forex, metals, indices, and crypto. Identifies key market highs and lows, places pending stop orders at major breakout zones, and manages positions with smart trailing-stop logic. The original SwiftCap algorithm — proven across hundreds of live trading sessions.
-              </p>
+              <p class="ea-desc">Designed to operate across high-volatility markets including forex, metals, indices, and crypto. Identifies key market highs and lows, places pending stop orders at major breakout zones, and manages positions with smart trailing-stop logic for optimal exits.</p>
               <div class="ea-pairs">
                 <span>GOLD</span><span>USDJPY</span><span>USTEC</span><span>BITCOIN</span>
               </div>
@@ -655,11 +677,11 @@
             <div class="ea-card-right">
               <div class="ea-stats-grid">
                 <div class="ea-stat-cell">
-                  <div class="s-label">Monthly Avg</div>
+                  <div class="s-label">Monthly</div>
                   <div class="s-value green">+10.2%</div>
                 </div>
                 <div class="ea-stat-cell">
-                  <div class="s-label">Max Drawdown</div>
+                  <div class="s-label">Drawdown</div>
                   <div class="s-value">5.8%</div>
                 </div>
                 <div class="ea-stat-cell">
@@ -668,21 +690,19 @@
                 </div>
                 <div class="ea-stat-cell">
                   <div class="s-label">Timeframe</div>
-                  <div class="s-value">M5</div>
+                  <div class="s-value">5M</div>
                 </div>
               </div>
-
               <div class="ea-features-title">Key Capabilities</div>
               <ul class="ea-features">
                 <li><span class="feat-check">✓</span> Breakout-detection with pending stop orders at key highs/lows</li>
-                <li><span class="feat-check">✓</span> Smart trailing-stop logic for maximum profit capture</li>
-                <li><span class="feat-check">✓</span> Operates across forex, metals, indices, and crypto</li>
-                <li><span class="feat-check">✓</span> Built-in daily &amp; max drawdown hard stops</li>
-                <li><span class="feat-check">✓</span> Zero-emotion execution — no manual override required</li>
+                <li><span class="feat-check">✓</span> Intelligent trailing-stop exit management</li>
+                <li><span class="feat-check">✓</span> Multi-asset support: Forex, Metals, Indices, Crypto</li>
+                <li><span class="feat-check">✓</span> Strict daily drawdown enforcement</li>
+                <li><span class="feat-check">✓</span> Prop firm challenge compatible</li>
               </ul>
-
               <div class="ea-compat">
-                <span class="ea-compat-label">Compatibility</span>
+                <span class="ea-compat-label">Compatible:</span>
                 <span class="compat-tag compat-green">MT4</span>
                 <span class="compat-tag compat-green">MT5</span>
                 <span class="compat-tag compat-green">Prop Firm</span>
@@ -693,7 +713,7 @@
         </div>
 
         <!-- ── SwiftCap Breakout EA ── -->
-        <div class="ea-card" data-tags="prop mt4 personal">
+        <div class="ea-card" data-tags="prop mt4 mt5">
           <div class="ea-card-inner">
             <div class="ea-card-left">
               <div class="ea-card-header">
@@ -703,12 +723,10 @@
                 <div class="ea-card-meta">
                   <span class="ea-badge">Prop Firm Friendly</span>
                   <h2 class="display-font">SwiftCap Breakout EA</h2>
-                  <div class="ea-strategy-tag">Breakout • MT4 &amp; MT5</div>
+                  <div class="ea-strategy-tag">Breakout Strategy • MT4 &amp; MT5</div>
                 </div>
               </div>
-              <p class="ea-desc">
-                Engineered to capture explosive breakout moves from institutional supply and demand zones. Tight risk management with high reward-to-risk ratios. Purpose-built for prop firm challenge phases with strict drawdown compliance. One of the most prop-firm-compatible EAs in the suite with consistent phase-pass results.
-              </p>
+              <p class="ea-desc">Engineered to capture explosive breakout moves from institutional supply and demand zones. Tight risk management with high reward-to-risk ratios. Purpose-built for prop firm challenge phases with strict drawdown compliance and precision entry timing.</p>
               <div class="ea-pairs">
                 <span>GOLD</span><span>USDJPY</span><span>BITCOIN</span><span>US30</span><span>USTEC</span><span>GBPUSD</span>
               </div>
@@ -720,11 +738,11 @@
             <div class="ea-card-right">
               <div class="ea-stats-grid">
                 <div class="ea-stat-cell">
-                  <div class="s-label">Monthly Avg</div>
+                  <div class="s-label">Monthly</div>
                   <div class="s-value green">+12.4%</div>
                 </div>
                 <div class="ea-stat-cell">
-                  <div class="s-label">Max Drawdown</div>
+                  <div class="s-label">Drawdown</div>
                   <div class="s-value">7.2%</div>
                 </div>
                 <div class="ea-stat-cell">
@@ -736,18 +754,16 @@
                   <div class="s-value">M15</div>
                 </div>
               </div>
-
               <div class="ea-features-title">Key Capabilities</div>
               <ul class="ea-features">
                 <li><span class="feat-check">✓</span> Institutional supply &amp; demand zone detection</li>
-                <li><span class="feat-check">✓</span> High reward-to-risk ratio targeting (min 1:2)</li>
-                <li><span class="feat-check">✓</span> Strict daily drawdown cap — prop firm compliant</li>
-                <li><span class="feat-check">✓</span> Wide instrument support including indices and crypto</li>
-                <li><span class="feat-check">✓</span> Automated news-filter to avoid high-impact events</li>
+                <li><span class="feat-check">✓</span> High reward-to-risk ratio entries</li>
+                <li><span class="feat-check">✓</span> Strict prop firm drawdown compliance</li>
+                <li><span class="feat-check">✓</span> Precision breakout confirmation filters</li>
+                <li><span class="feat-check">✓</span> Multi-pair support across major instruments</li>
               </ul>
-
               <div class="ea-compat">
-                <span class="ea-compat-label">Compatibility</span>
+                <span class="ea-compat-label">Compatible:</span>
                 <span class="compat-tag compat-green">MT4</span>
                 <span class="compat-tag compat-green">MT5</span>
                 <span class="compat-tag compat-green">Prop Firm</span>
@@ -758,7 +774,7 @@
         </div>
 
         <!-- ── SwiftCap Grid EA ── -->
-        <div class="ea-card" data-tags="personal">
+        <div class="ea-card" data-tags="personal mt5">
           <div class="ea-card-inner">
             <div class="ea-card-left">
               <div class="ea-card-header">
@@ -768,12 +784,10 @@
                 <div class="ea-card-meta">
                   <span class="ea-badge">High Yield</span>
                   <h2 class="display-font">SwiftCap Grid EA</h2>
-                  <div class="ea-strategy-tag">Grid / DCA • MT5 • Personal Accounts</div>
+                  <div class="ea-strategy-tag">Grid / DCA • MT5 Only</div>
                 </div>
               </div>
-              <p class="ea-desc">
-                Intelligent grid system with dynamic position sizing and equity-based risk controls. Optimised for personal accounts with higher risk tolerance — leverages correlated currency pairs for maximum grid efficiency. Delivers consistent compounding returns in ranging market conditions. Not recommended for prop firms due to drawdown profile.
-              </p>
+              <p class="ea-desc">Intelligent grid system with dynamic position sizing and equity-based risk controls. Optimised for personal accounts with higher risk tolerance. Capitalises on range-bound market conditions with systematic order placement and automated recovery logic.</p>
               <div class="ea-pairs">
                 <span>AUDCAD</span><span>AUDNZD</span><span>NZDCAD</span>
               </div>
@@ -785,11 +799,11 @@
             <div class="ea-card-right">
               <div class="ea-stats-grid">
                 <div class="ea-stat-cell">
-                  <div class="s-label">Monthly Avg</div>
+                  <div class="s-label">Monthly</div>
                   <div class="s-value green">+8%</div>
                 </div>
                 <div class="ea-stat-cell">
-                  <div class="s-label">Max Drawdown</div>
+                  <div class="s-label">Drawdown</div>
                   <div class="s-value">14.5%</div>
                 </div>
                 <div class="ea-stat-cell">
@@ -801,20 +815,19 @@
                   <div class="s-value">M15</div>
                 </div>
               </div>
-
               <div class="ea-features-title">Key Capabilities</div>
               <ul class="ea-features">
-                <li><span class="feat-check">✓</span> Dynamic grid spacing based on ATR volatility</li>
-                <li><span class="feat-check">✓</span> Equity-based position sizing — scales with account growth</li>
-                <li><span class="feat-check">✓</span> Optimised for correlated AUD/NZD/CAD pairs</li>
-                <li><span class="feat-check">✓</span> DCA recovery logic for adverse market moves</li>
-                <li><span class="feat-check">✓</span> Maximum open orders cap to protect equity</li>
+                <li><span class="feat-check">✓</span> Dynamic grid spacing with adaptive lot sizing</li>
+                <li><span class="feat-check">✓</span> Equity-based risk controls and drawdown limits</li>
+                <li><span class="feat-check">✓</span> Optimised for correlated currency pair baskets</li>
+                <li><span class="feat-check">✓</span> Automated recovery and basket close logic</li>
+                <li><span class="feat-check">✓</span> Not recommended for prop firms</li>
               </ul>
-
               <div class="ea-compat">
-                <span class="ea-compat-label">Compatibility</span>
-                <span class="compat-tag compat-amber">MT5 Only</span>
-                <span class="compat-tag compat-red">Not Prop Firm</span>
+                <span class="ea-compat-label">Compatible:</span>
+                <span class="compat-tag compat-red">MT4</span>
+                <span class="compat-tag compat-green">MT5</span>
+                <span class="compat-tag compat-red">Prop Firm</span>
                 <span class="compat-tag compat-green">Personal</span>
               </div>
             </div>
@@ -822,7 +835,7 @@
         </div>
 
         <!-- ── SwiftCap Trinity EA ── -->
-        <div class="ea-card" data-tags="prop personal">
+        <div class="ea-card" data-tags="prop mt5">
           <div class="ea-card-inner">
             <div class="ea-card-left">
               <div class="ea-card-header">
@@ -832,12 +845,10 @@
                 <div class="ea-card-meta">
                   <span class="ea-badge">Flagship</span>
                   <h2 class="display-font">SwiftCap Trinity EA</h2>
-                  <div class="ea-strategy-tag">Hybrid 3-Layer • MT5</div>
+                  <div class="ea-strategy-tag">Hybrid 3-Layer • MT5 Only</div>
                 </div>
               </div>
-              <p class="ea-desc">
-                Our most advanced algorithm: three integrated layers — intraday scalping, trend exploitation, and reversal hedging — operating simultaneously on GOLD. Designed for experienced traders seeking comprehensive market coverage. The Trinity adapts dynamically to market regime changes, making it equally effective in trending, ranging, and volatile conditions.
-              </p>
+              <p class="ea-desc">Our most advanced algorithm: three integrated layers — intraday scalping, trend exploitation, and reversal hedging. Designed for experienced traders seeking comprehensive market coverage with adaptive logic that responds to volatility regime changes.</p>
               <div class="ea-pairs">
                 <span>GOLD</span>
               </div>
@@ -849,11 +860,11 @@
             <div class="ea-card-right">
               <div class="ea-stats-grid">
                 <div class="ea-stat-cell">
-                  <div class="s-label">Monthly Avg</div>
+                  <div class="s-label">Monthly</div>
                   <div class="s-value green">+11.6%</div>
                 </div>
                 <div class="ea-stat-cell">
-                  <div class="s-label">Max Drawdown</div>
+                  <div class="s-label">Drawdown</div>
                   <div class="s-value">6.5%</div>
                 </div>
                 <div class="ea-stat-cell">
@@ -865,20 +876,19 @@
                   <div class="s-value">M15</div>
                 </div>
               </div>
-
               <div class="ea-features-title">Key Capabilities</div>
               <ul class="ea-features">
-                <li><span class="feat-check">✓</span> Layer 1: Intraday scalping for fast market momentum</li>
-                <li><span class="feat-check">✓</span> Layer 2: Trend-following for sustained directional moves</li>
-                <li><span class="feat-check">✓</span> Layer 3: Reversal hedging to capitalise on corrections</li>
-                <li><span class="feat-check">✓</span> Market regime detection — auto-adjusts strategy weighting</li>
-                <li><span class="feat-check">✓</span> Single-chart deployment — optimised exclusively for GOLD</li>
+                <li><span class="feat-check">✓</span> Three-layer adaptive engine: scalp, trend &amp; reversal</li>
+                <li><span class="feat-check">✓</span> Volatility regime detection and position adaptation</li>
+                <li><span class="feat-check">✓</span> Precision gold-specific market logic</li>
+                <li><span class="feat-check">✓</span> Advanced hedging module for adverse conditions</li>
+                <li><span class="feat-check">✓</span> Suitable for both prop firm and personal accounts</li>
               </ul>
-
               <div class="ea-compat">
-                <span class="ea-compat-label">Compatibility</span>
-                <span class="compat-tag compat-amber">MT5 Only</span>
-                <span class="compat-tag compat-green">Prop Firm</span>
+                <span class="ea-compat-label">Compatible:</span>
+                <span class="compat-tag compat-red">MT4</span>
+                <span class="compat-tag compat-green">MT5</span>
+                <span class="compat-tag compat-amber">Prop Firm</span>
                 <span class="compat-tag compat-green">Personal</span>
               </div>
             </div>
@@ -893,115 +903,83 @@
   <section class="comparison">
     <div class="container">
       <div class="section-label center">Side-by-Side</div>
-      <h2 class="section-title text-center">EA <span class="gold">Comparison</span></h2>
+      <h2 class="section-title text-center">Algorithm <span class="gold">Comparison</span></h2>
       <div class="divider center"></div>
-      <p class="section-subtitle text-center mx-auto">
-        Choose the right algorithm for your trading objective with this full feature comparison.
-      </p>
+      <p class="section-subtitle text-center mx-auto">Compare all four EAs across key performance and compatibility metrics to find the right fit for your trading goals.</p>
       <div class="comp-table-wrap">
         <table class="comp-table">
           <thead>
             <tr>
               <th>Feature</th>
-              <th class="ea-col">
-                <div class="ea-name-cell" style="justify-content:center;gap:8px;">
-                  <img src="master-ea.png" alt="Master" style="width:24px;height:24px;border-radius:5px;" />Master EA
-                </div>
-              </th>
-              <th class="ea-col">
-                <div class="ea-name-cell" style="justify-content:center;gap:8px;">
-                  <img src="breakout-ea.png" alt="Breakout" style="width:24px;height:24px;border-radius:5px;" />Breakout EA
-                </div>
-              </th>
-              <th class="ea-col">
-                <div class="ea-name-cell" style="justify-content:center;gap:8px;">
-                  <img src="grid-ea.png" alt="Grid" style="width:24px;height:24px;border-radius:5px;" />Grid EA
-                </div>
-              </th>
-              <th class="ea-col">
-                <div class="ea-name-cell" style="justify-content:center;gap:8px;">
-                  <img src="trinity-ea.png" alt="Trinity" style="width:24px;height:24px;border-radius:5px;" />Trinity EA
-                </div>
-              </th>
+              <th>Master EA</th>
+              <th>Breakout EA</th>
+              <th>Grid EA</th>
+              <th>Trinity EA</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>Strategy Type</td>
-              <td class="ea-col val-gold">Scalping</td>
-              <td class="ea-col val-gold">Breakout</td>
-              <td class="ea-col val-gold">Grid / DCA</td>
-              <td class="ea-col val-gold">Hybrid 3-Layer</td>
-            </tr>
-            <tr>
               <td>Platform</td>
-              <td class="ea-col">MT4 &amp; MT5</td>
-              <td class="ea-col">MT4 &amp; MT5</td>
-              <td class="ea-col">MT5 Only</td>
-              <td class="ea-col">MT5 Only</td>
+              <td>MT4 &amp; MT5</td>
+              <td>MT4 &amp; MT5</td>
+              <td>MT5 Only</td>
+              <td>MT5 Only</td>
             </tr>
             <tr>
               <td>Monthly Return</td>
-              <td class="ea-col val-green">+10.2%</td>
-              <td class="ea-col val-green">+12.4%</td>
-              <td class="ea-col val-green">+8%</td>
-              <td class="ea-col val-green">+11.6%</td>
+              <td class="val-green">+10.2%</td>
+              <td class="val-green">+12.4%</td>
+              <td class="val-green">+8%</td>
+              <td class="val-green">+11.6%</td>
             </tr>
             <tr>
               <td>Max Drawdown</td>
-              <td class="ea-col">5.8%</td>
-              <td class="ea-col">7.2%</td>
-              <td class="ea-col">14.5%</td>
-              <td class="ea-col">6.5%</td>
+              <td>5.8%</td>
+              <td>7.2%</td>
+              <td>14.5%</td>
+              <td>6.5%</td>
             </tr>
             <tr>
               <td>Win Rate</td>
-              <td class="ea-col val-green">85%</td>
-              <td class="ea-col val-green">65%</td>
-              <td class="ea-col val-green">82%</td>
-              <td class="ea-col val-green">68%</td>
-            </tr>
-            <tr>
-              <td>Timeframe</td>
-              <td class="ea-col">M5</td>
-              <td class="ea-col">M15</td>
-              <td class="ea-col">M15</td>
-              <td class="ea-col">M15</td>
+              <td class="val-green">85%</td>
+              <td class="val-green">65%</td>
+              <td class="val-green">82%</td>
+              <td class="val-green">68%</td>
             </tr>
             <tr>
               <td>Prop Firm Safe</td>
-              <td class="ea-col"><span class="check">✓</span></td>
-              <td class="ea-col"><span class="check">✓</span></td>
-              <td class="ea-col"><span class="cross">✗</span></td>
-              <td class="ea-col"><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="cross">✗</span></td>
+              <td><span class="check">✓</span></td>
             </tr>
             <tr>
               <td>Personal Account</td>
-              <td class="ea-col"><span class="check">✓</span></td>
-              <td class="ea-col"><span class="check">✓</span></td>
-              <td class="ea-col"><span class="check">✓</span></td>
-              <td class="ea-col"><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
             </tr>
             <tr>
-              <td>News Filter</td>
-              <td class="ea-col"><span class="check">✓</span></td>
-              <td class="ea-col"><span class="check">✓</span></td>
-              <td class="ea-col"><span class="cross">✗</span></td>
-              <td class="ea-col"><span class="check">✓</span></td>
+              <td>Trailing Stop</td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="cross">✗</span></td>
+              <td><span class="check">✓</span></td>
             </tr>
             <tr>
-              <td>Instruments</td>
-              <td class="ea-col">4+</td>
-              <td class="ea-col">6+</td>
-              <td class="ea-col">3</td>
-              <td class="ea-col">1 (GOLD)</td>
+              <td>Timeframe</td>
+              <td>5M</td>
+              <td>M15</td>
+              <td>M15</td>
+              <td>M15</td>
             </tr>
             <tr>
-              <td>MQL5 Link</td>
-              <td class="ea-col"><a href="https://www.mql5.com/en/market/product/141855" target="_blank" style="color:var(--gold);text-decoration:underline;font-size:.78rem;">View →</a></td>
-              <td class="ea-col"><a href="https://www.mql5.com/en/market/product/150117" target="_blank" style="color:var(--gold);text-decoration:underline;font-size:.78rem;">View →</a></td>
-              <td class="ea-col"><a href="https://www.mql5.com/en/market/product/164484" target="_blank" style="color:var(--gold);text-decoration:underline;font-size:.78rem;">View →</a></td>
-              <td class="ea-col"><a href="https://www.mql5.com/en/market/product/165807" target="_blank" style="color:var(--gold);text-decoration:underline;font-size:.78rem;">View →</a></td>
+              <td>Strategy Type</td>
+              <td>Scalping</td>
+              <td>Breakout</td>
+              <td>Grid / DCA</td>
+              <td>Hybrid 3-Layer</td>
             </tr>
           </tbody>
         </table>
@@ -1009,36 +987,84 @@
     </div>
   </section>
 
+  <!-- ════════════════════ LIVE RESULTS ════════════════════ -->
+  <section class="results-section">
+    <div class="container">
+      <div class="section-label">Performance Data</div>
+      <h2 class="section-title">Live, <span class="gold">Verified Results</span></h2>
+      <div class="divider"></div>
+      <p class="section-subtitle">All performance statistics are sourced from live trading accounts. Results are tracked and publicly verifiable.</p>
+      <div class="results-grid">
+        <div class="result-card">
+          <div class="r-val green">+34%</div>
+          <div class="r-label">3-Month Account Growth</div>
+          <div class="r-desc">Breakout EA on personal GOLD account. Maximum drawdown recorded at under 6% throughout the period.</div>
+        </div>
+        <div class="result-card">
+          <div class="r-val">9 Days</div>
+          <div class="r-label">FTMO Phase 1 Pass</div>
+          <div class="r-desc">Master EA completed a $100K FTMO Phase 1 challenge in 9 trading days with full rule compliance.</div>
+        </div>
+        <div class="result-card">
+          <div class="r-val green">68%</div>
+          <div class="r-label">Trinity EA Win Rate</div>
+          <div class="r-desc">Trinity EA maintained a 68% win rate over 6 months of live GOLD trading with 6.5% max drawdown.</div>
+        </div>
+      </div>
+      <p class="results-note">
+        All live account results are tracked and verified on <a href="https://www.mql5.com/en/users/swiftcapeas/seller" target="_blank">MQL5 Market</a>. Past performance does not guarantee future results.
+      </p>
+    </div>
+  </section>
+
   <!-- ════════════════════ FAQ ════════════════════ -->
   <section class="faq">
     <div class="container">
-      <div class="section-label">Common Questions</div>
-      <h2 class="section-title">EA <span class="gold">FAQ</span></h2>
-      <div class="divider"></div>
-      <div class="faq-grid">
+      <div class="section-label center">Common Questions</div>
+      <h2 class="section-title text-center">EA <span class="gold">FAQ</span></h2>
+      <div class="divider center"></div>
+      <div class="faq-list">
         <div class="faq-item">
-          <h4><span class="q-num">01</span> Which EA should I use for prop firm challenges?</h4>
-          <p>The Breakout EA and Master EA are both engineered for prop firm compliance with strict daily drawdown caps. The Trinity EA is also prop firm compatible. The Grid EA is the only one <em>not</em> recommended for prop firms due to its higher drawdown profile.</p>
+          <button class="faq-q">
+            Are these EAs compatible with my prop firm?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">Master EA, Breakout EA, and Trinity EA are all engineered with prop firm rules in mind — strict drawdown enforcement, no prohibited strategies, and clean execution. The Grid EA is not recommended for prop firms due to its DCA nature.</div>
         </div>
         <div class="faq-item">
-          <h4><span class="q-num">02</span> Do the EAs work on MT4 as well as MT5?</h4>
-          <p>The Master EA and Breakout EA are available for both MT4 and MT5. The Grid EA and Trinity EA are MT5-only, as they leverage MT5-specific features for their multi-position and multi-layer logic.</p>
+          <button class="faq-q">
+            Which MT platform do I need?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">Master EA and Breakout EA support both MT4 and MT5. Grid EA and Trinity EA are MT5-only. All EAs are purchased and licensed through MQL5 Market and attach directly to your MetaTrader terminal.</div>
         </div>
         <div class="faq-item">
-          <h4><span class="q-num">03</span> How are the EAs purchased and licensed?</h4>
-          <p>All EAs are sold exclusively through MQL5 Market. Purchase grants you an instant digital licence tied to your MQL5 account. There are no third-party sites — always buy directly via the official MQL5 links on this page.</p>
+          <button class="faq-q">
+            How do I purchase and install an EA?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">Purchase is made through MQL5 Market. After purchase, the EA is available in your MQL5 account and can be launched directly inside MetaTrader via the Market tab. Full setup guides are available on our Guides page.</div>
         </div>
         <div class="faq-item">
-          <h4><span class="q-num">04</span> What minimum account size is recommended?</h4>
-          <p>A minimum of $1,000 is recommended for personal accounts. For prop firm challenges, the EA risk parameters auto-scale to the challenge size — our community members have passed challenges ranging from $10K to $200K.</p>
+          <button class="faq-q">
+            What broker should I use?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">We recommend IC Markets or FP Markets for low-spread execution. Both are affiliated partners and offer institutional-grade conditions suitable for our EAs. A VPS is also recommended for 24/5 uptime — ForexVPS is our preferred provider.</div>
         </div>
         <div class="faq-item">
-          <h4><span class="q-num">05</span> Do I need a VPS to run the EAs?</h4>
-          <p>A VPS is strongly recommended to ensure 24/5 uptime and consistent execution. Our official partner <a href="https://www.forexvps.net/?aff=67839" target="_blank" style="color:var(--gold);text-decoration:underline;">ForexVPS</a> offers low-latency hosting optimised for MetaTrader. Join our Discord for VPS setup assistance.</p>
+          <button class="faq-q">
+            Is there support available after purchase?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">Yes. All customers receive access to our Discord server where the development team provides live support, optimal settings, installation help, and real-time trade alerts. Join via the button in the navigation or footer.</div>
         </div>
         <div class="faq-item">
-          <h4><span class="q-num">06</span> Where can I see verified live performance results?</h4>
-          <p>All live account results are tracked and verified on <a href="https://www.myfxbook.com/members/SwiftCapEAs" target="_blank" style="color:var(--gold);text-decoration:underline;">MyFXBook</a>. You can also join the <a href="https://discord.gg/gH3RJWRJKS" target="_blank" style="color:var(--gold);text-decoration:underline;">Discord server</a> where community members share real-time account screenshots and prop firm pass certificates.</p>
+          <button class="faq-q">
+            How are results verified?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">All live account performance data is tracked and publicly available on the MQL5 Market profile. Results are from real trading accounts — not backtests. You can view the live records at our MQL5 seller page.</div>
         </div>
       </div>
     </div>
@@ -1048,8 +1074,8 @@
   <section class="cta">
     <div class="container">
       <img src="logo.png" alt="SwiftCap" class="cta-logo" />
-      <h2 class="display-font">Ready to Deploy <span class="gold">Precision?</span></h2>
-      <p>Choose your algorithm, acquire it on MQL5 Market, and be live in under 30 minutes. Our Discord team is standing by for setup support.</p>
+      <h2 class="display-font">Ready to Trade With <span class="gold">Precision</span></h2>
+      <p>Select your algorithm, deploy in minutes, and let institutional-grade logic handle the rest.</p>
       <div class="cta-buttons">
         <a href="https://www.mql5.com/en/users/swiftcapeas/seller" target="_blank" class="btn btn-primary">Browse on MQL5 →</a>
         <a href="https://discord.gg/gH3RJWRJKS" target="_blank" class="btn btn-secondary">Join Discord</a>
@@ -1061,17 +1087,13 @@
   <footer>
     <div class="container">
       <div class="footer-grid">
-        <!-- Brand -->
         <div class="footer-brand">
           <div class="footer-logo">
             <img src="logo.png" alt="SwiftCap EAs" />
             <span class="footer-logo-text display-font">Swift<span class="f-gold">Cap</span> EAs</span>
           </div>
-          <p class="footer-desc">
-            Institutional-grade algorithmic trading solutions. Precision-engineered Expert Advisors for prop firm challenges and personal capital growth.
-          </p>
+          <p class="footer-desc">Institutional-grade algorithmic trading solutions. Precision-engineered Expert Advisors for prop firm challenges and personal capital growth.</p>
         </div>
-        <!-- Navigation -->
         <div class="footer-nav">
           <h5>Navigation</h5>
           <ul>
@@ -1082,7 +1104,6 @@
             <li><a href="contact.html">Contact</a></li>
           </ul>
         </div>
-        <!-- Contact -->
         <div class="footer-contact">
           <h5>Contact</h5>
           <div class="contact-item">
@@ -1112,7 +1133,6 @@
           </div>
         </div>
       </div>
-      <!-- Bottom Bar -->
       <div class="footer-bottom">
         <p>&copy; 2026 SwiftCap EAs. All rights reserved. Trading involves substantial risk. Past performance does not guarantee future results.</p>
         <div class="footer-socials">
@@ -1153,27 +1173,29 @@
       });
     });
 
-    // Filter bar
-    const filterTabs = document.querySelectorAll('.filter-tab');
-    const eaCards = document.querySelectorAll('#eaGrid .ea-card');
-    const filterCount = document.getElementById('filterCount');
-
-    filterTabs.forEach(tab => {
+    // Filter tabs
+    document.querySelectorAll('.filter-tab').forEach(tab => {
       tab.addEventListener('click', () => {
-        filterTabs.forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
-
         const filter = tab.dataset.filter;
-        let visible = 0;
-
-        eaCards.forEach(card => {
-          const tags = card.dataset.tags || '';
-          const show = filter === 'all' || tags.includes(filter);
-          card.style.display = show ? '' : 'none';
-          if (show) visible++;
+        document.querySelectorAll('.ea-card').forEach(card => {
+          if (filter === 'all') {
+            card.style.display = '';
+          } else {
+            const tags = card.dataset.tags || '';
+            card.style.display = tags.includes(filter) ? '' : 'none';
+          }
         });
+      });
+    });
 
-        filterCount.textContent = visible;
+    // FAQ accordion
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.querySelector('.faq-q').addEventListener('click', () => {
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
       });
     });
 
@@ -1187,10 +1209,10 @@
       });
     }, { threshold: 0.03 });
 
-    document.querySelectorAll('.ea-card, .faq-item').forEach((el, i) => {
+    document.querySelectorAll('.ea-card, .result-card').forEach((el, i) => {
       el.style.opacity = '0';
-      el.style.transform = 'translateY(20px)';
-      el.style.transition = `opacity 0.45s ease ${i * 0.06}s, transform 0.45s ease ${i * 0.06}s`;
+      el.style.transform = 'translateY(16px)';
+      el.style.transition = `opacity 0.4s ease ${i * 0.07}s, transform 0.4s ease ${i * 0.07}s`;
       animObs.observe(el);
     });
   </script>
