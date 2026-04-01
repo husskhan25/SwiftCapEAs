@@ -413,34 +413,17 @@
     .rec-card a:hover { color: var(--gold-light); }
 
     /* ══════════ FAQ ══════════ */
-    .faq { padding: 100px 0; position: relative; }
-    .faq::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    .faq { padding: 100px 0; }
+    .faq-header { text-align: center; margin-bottom: 56px; }
+    .faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; background: var(--border); max-width: 1100px; margin: 0 auto; }
+    .faq-item {
+      background: var(--bg-primary); padding: 36px 40px;
+      transition: background .3s;
     }
-    .faq-list { margin-top: 56px; max-width: 860px; margin-left: auto; margin-right: auto; }
-    .faq-item { border-bottom: 1px solid var(--border); }
-    .faq-q {
-      width: 100%; text-align: left; background: none; border: none;
-      padding: 24px 0; display: flex; justify-content: space-between; align-items: center;
-      gap: 20px; cursor: pointer; font-family: 'Montserrat', sans-serif;
-      font-size: .92rem; font-weight: 600; color: var(--white); transition: color .2s;
-    }
-    .faq-q:hover { color: var(--gold); }
-    .faq-q .faq-icon {
-      width: 24px; height: 24px; border-radius: 50%;
-      border: 1px solid rgba(255,185,30,.3);
-      display: flex; align-items: center; justify-content: center;
-      font-size: .8rem; color: var(--gold); flex-shrink: 0; transition: transform .3s;
-    }
-    .faq-item.open .faq-icon { transform: rotate(45deg); }
-    .faq-a {
-      font-size: .87rem; color: var(--grey); line-height: 1.8; font-weight: 300;
-      max-height: 0; overflow: hidden; transition: max-height .4s ease, padding .4s ease;
-      padding: 0;
-    }
-    .faq-a a { color: var(--gold); text-decoration: underline; }
-    .faq-item.open .faq-a { max-height: 300px; padding-bottom: 24px; }
+    .faq-item:hover { background: var(--bg-section); }
+    .faq-item h4 { font-size: .92rem; font-weight: 700; margin-bottom: 12px; letter-spacing: .2px; }
+    .faq-item p { font-size: .82rem; color: var(--grey); line-height: 1.8; font-weight: 300; }
+    .faq-item p a { color: var(--gold); text-decoration: underline; }
 
     /* ══════════ CTA ══════════ */
     .cta {
@@ -645,7 +628,7 @@
           <div class="step-num display-font">02</div>
           <div class="step-line"></div>
           <h4>Install MetaTrader</h4>
-          <p>Download MT4 or MT5 from your broker. Log in with your trading credentials. The EA will appear in the Market tab automatically after purchase.</p>
+          <p>Download MT4 or MT5 from your broker. Log in to MQL5 on trading platform. The EA will appear in the Market tab under Experts automatically after purchase.</p>
         </div>
         <div class="qs-step">
           <div class="step-num display-font">03</div>
@@ -659,132 +642,6 @@
           <h4>Deploy on VPS</h4>
           <p>For 24/5 uninterrupted trading, deploy on a VPS. We recommend <a href="https://www.forexvps.net/?aff=67839" target="_blank">ForexVPS</a> for low-latency MetaTrader hosting.</p>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ════════════════════ DETAILED GUIDE CARDS ════════════════════ -->
-  <section class="guides-section">
-    <div class="container">
-      <div class="section-label">In-Depth Guides</div>
-      <h2 class="section-title">Platform &amp; <span class="gold">Setup Guides</span></h2>
-      <div class="divider"></div>
-      <p class="section-subtitle">Comprehensive walkthroughs covering every aspect of EA installation, configuration, broker setup, and VPS deployment.</p>
-
-      <div class="guides-grid">
-
-        <!-- MetaTrader Setup -->
-        <div class="guide-card">
-          <div class="guide-card-header">
-            <div class="guide-card-icon">
-              <span class="icon-text">📊</span>
-            </div>
-            <div class="guide-card-meta">
-              <span class="guide-badge">Essential</span>
-              <h3 class="display-font">MetaTrader Installation</h3>
-              <div class="guide-tag">MT4 &amp; MT5 Setup</div>
-            </div>
-          </div>
-          <p class="guide-desc">Complete guide to downloading, installing, and configuring MetaTrader 4 or MetaTrader 5 on Windows, Mac, or VPS environments. Includes broker login walkthrough and chart configuration.</p>
-          <div class="guide-topics-title">What's Covered</div>
-          <ul class="guide-topics">
-            <li><span class="topic-check">✓</span> Downloading MT4/MT5 from your broker</li>
-            <li><span class="topic-check">✓</span> Creating and logging into your trading account</li>
-            <li><span class="topic-check">✓</span> Enabling AutoTrading and Expert Advisors</li>
-            <li><span class="topic-check">✓</span> Chart setup: correct pair and timeframe</li>
-            <li><span class="topic-check">✓</span> Troubleshooting common installation issues</li>
-          </ul>
-          <div class="guide-card-actions">
-            <!-- PLACEHOLDER: Replace "#" with actual PDF link -->
-            <a href="#" class="btn btn-primary btn-sm">Download PDF ↓</a>
-            <a href="https://discord.gg/gH3RJWRJKS" target="_blank" class="btn btn-outline-gold btn-sm">Get Help</a>
-          </div>
-        </div>
-
-        <!-- EA Installation -->
-        <div class="guide-card">
-          <div class="guide-card-header">
-            <div class="guide-card-icon">
-              <span class="icon-text">⚙️</span>
-            </div>
-            <div class="guide-card-meta">
-              <span class="guide-badge">Essential</span>
-              <h3 class="display-font">EA Installation &amp; Activation</h3>
-              <div class="guide-tag">MQL5 Market Purchase Flow</div>
-            </div>
-          </div>
-          <p class="guide-desc">Step-by-step guide to purchasing an EA from MQL5 Market, activating the license, and attaching it to your MetaTrader chart with the correct parameters enabled.</p>
-          <div class="guide-topics-title">What's Covered</div>
-          <ul class="guide-topics">
-            <li><span class="topic-check">✓</span> Purchasing from MQL5 Market</li>
-            <li><span class="topic-check">✓</span> Locating the EA in your MetaTrader terminal</li>
-            <li><span class="topic-check">✓</span> Attaching to chart with correct settings</li>
-            <li><span class="topic-check">✓</span> Enabling DLL imports and AutoTrading</li>
-            <li><span class="topic-check">✓</span> Verifying the EA is running correctly</li>
-          </ul>
-          <div class="guide-card-actions">
-            <!-- PLACEHOLDER: Replace "#" with actual PDF link -->
-            <a href="#" class="btn btn-primary btn-sm">Download PDF ↓</a>
-            <a href="https://discord.gg/gH3RJWRJKS" target="_blank" class="btn btn-outline-gold btn-sm">Get Help</a>
-          </div>
-        </div>
-
-        <!-- VPS Setup -->
-        <div class="guide-card">
-          <div class="guide-card-header">
-            <div class="guide-card-icon">
-              <span class="icon-text">🖥️</span>
-            </div>
-            <div class="guide-card-meta">
-              <span class="guide-badge green">Recommended</span>
-              <h3 class="display-font">VPS Deployment Guide</h3>
-              <div class="guide-tag">24/5 Uninterrupted Trading</div>
-            </div>
-          </div>
-          <p class="guide-desc">Learn how to set up a Virtual Private Server for always-on EA execution. Covers VPS selection, MetaTrader installation on VPS, and remote management for optimal latency.</p>
-          <div class="guide-topics-title">What's Covered</div>
-          <ul class="guide-topics">
-            <li><span class="topic-check">✓</span> Choosing the right VPS plan (ForexVPS recommended)</li>
-            <li><span class="topic-check">✓</span> Connecting via Remote Desktop (RDP)</li>
-            <li><span class="topic-check">✓</span> Installing MetaTrader on VPS</li>
-            <li><span class="topic-check">✓</span> Transferring EA and settings to VPS</li>
-            <li><span class="topic-check">✓</span> Monitoring and maintenance best practices</li>
-          </ul>
-          <div class="guide-card-actions">
-            <!-- PLACEHOLDER: Replace "#" with actual PDF link -->
-            <a href="#" class="btn btn-primary btn-sm">Download PDF ↓</a>
-            <a href="https://www.forexvps.net/?aff=67839" target="_blank" class="btn btn-outline-gold btn-sm">Get VPS →</a>
-          </div>
-        </div>
-
-        <!-- Broker Setup -->
-        <div class="guide-card">
-          <div class="guide-card-header">
-            <div class="guide-card-icon">
-              <span class="icon-text">🏦</span>
-            </div>
-            <div class="guide-card-meta">
-              <span class="guide-badge green">Recommended</span>
-              <h3 class="display-font">Broker Account Setup</h3>
-              <div class="guide-tag">IC Markets &amp; FP Markets</div>
-            </div>
-          </div>
-          <p class="guide-desc">Detailed walkthrough for opening a raw spread ECN account with our recommended brokers. Includes account type selection, verification, and optimal account settings for EA trading.</p>
-          <div class="guide-topics-title">What's Covered</div>
-          <ul class="guide-topics">
-            <li><span class="topic-check">✓</span> Opening a Raw Spread / ECN account</li>
-            <li><span class="topic-check">✓</span> Account verification and funding</li>
-            <li><span class="topic-check">✓</span> Selecting correct leverage settings</li>
-            <li><span class="topic-check">✓</span> Downloading MT4/MT5 from broker portal</li>
-            <li><span class="topic-check">✓</span> Why ECN matters for scalping EAs</li>
-          </ul>
-          <div class="guide-card-actions">
-            <!-- PLACEHOLDER: Replace "#" with actual PDF link -->
-            <a href="#" class="btn btn-primary btn-sm">Download PDF ↓</a>
-            <a href="https://icmarkets.com/?camp=85950" target="_blank" class="btn btn-outline-gold btn-sm">IC Markets →</a>
-          </div>
-        </div>
-
       </div>
     </div>
   </section>
@@ -890,72 +747,44 @@
   <!-- ════════════════════ FAQ ════════════════════ -->
   <section class="faq">
     <div class="container">
-      <div class="section-label center">Common Questions</div>
-      <h2 class="section-title text-center">Setup <span class="gold">FAQ</span></h2>
-      <div class="divider center"></div>
-      <div class="faq-list">
-        <div class="faq-item">
-          <button class="faq-q">
-            How do I install an EA from MQL5 Market?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">After purchasing on <a href="https://www.mql5.com/en/users/swiftcapeas/seller" target="_blank">MQL5 Market</a>, open MetaTrader and go to the Market tab. Log in with your MQL5 account. The EA will appear under "Purchased". Click it, then select "Install". Drag it onto the correct chart and timeframe, enable AutoTrading, and confirm.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">
-            Which chart and timeframe should I use?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">Each EA has specific requirements: Master EA uses 5M timeframe, while Breakout EA, Grid EA, and Trinity EA all use M15. The correct pairs are listed on each EA's card on the EAs page and in the downloadable PDF guide. Using the wrong pair or timeframe will result in no trades.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">
-            Do I need a VPS to run the EA?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">A VPS is strongly recommended but not strictly required. Without a VPS, the EA only runs while your computer is on and MetaTrader is open. A VPS ensures 24/5 uptime for uninterrupted trading. We recommend <a href="https://www.forexvps.net/?aff=67839" target="_blank">ForexVPS</a> for low-latency hosting.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">
-            What broker settings are required?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">We recommend Raw Spread or ECN account types for the tightest spreads. Leverage of 1:100 or higher is optimal. Hedging must be enabled on your account (important for MT5). IC Markets and FP Markets both offer suitable account types — see the Broker Setup guide above.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">
-            Can I use the EA on multiple accounts?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">MQL5 Market licenses allow activation on a limited number of accounts (typically 5–10 activations). You can check your remaining activations in your MQL5 account under "Purchases". If you need additional activations, contact us via <a href="https://discord.gg/gH3RJWRJKS" target="_blank">Discord</a>.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">
-            Where can I get help with setup?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">Join our <a href="https://discord.gg/gH3RJWRJKS" target="_blank">Discord server</a> for live support from the development team and community. We offer real-time installation help, settings optimisation, and troubleshooting. You can also email us at <a href="mailto:swiftcapeas@gmail.com">swiftcapeas@gmail.com</a>.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">
-            How do I update to a newer EA version?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">Updates are delivered automatically through MQL5 Market. When a new version is released, MetaTrader will notify you. Simply accept the update and the latest version will replace the old one. Your settings may need to be reconfigured — check the updated PDF guide or Discord for release notes.</div>
-        </div>
+      <div class="faq-header">
+        <div class="section-label center">Common Questions</div>
+        <h2 class="section-title text-center">Setup <span class="gold">FAQ</span></h2>
+        <div class="divider center"></div>
       </div>
-    </div>
-  </section>
-
-  <!-- ════════════════════ CTA ════════════════════ -->
-  <section class="cta">
-    <div class="container">
-      <img src="logo.png" alt="SwiftCap" class="cta-logo" />
-      <h2 class="display-font">Need Help <span class="gold">Getting Started?</span></h2>
-      <p>Our Discord community offers live installation support, optimal settings, and direct access to the development team.</p>
-      <div class="cta-buttons">
-        <a href="https://discord.gg/gH3RJWRJKS" target="_blank" class="btn btn-primary">Join Discord →</a>
-        <a href="https://www.mql5.com/en/users/swiftcapeas/seller" target="_blank" class="btn btn-secondary">Browse EAs</a>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>How do I install an EA from MQL5 Market?</h4>
+          <p>After purchasing on <a href="https://www.mql5.com/en/users/swiftcapeas/seller" target="_blank">MQL5 Market</a>, open MetaTrader and go to the Market tab. Log in with your MQL5 account. The EA will appear under "Purchased". Click it, select "Install", drag it onto the correct chart, enable AutoTrading, and confirm.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Which chart and timeframe should I use?</h4>
+          <p>Master EA uses 5M timeframe, while Breakout EA, Grid EA, and Trinity EA all use M15. The correct pairs are listed on each EA's card on the <a href="eas.html">EAs page</a> and in the downloadable PDF guide. Using the wrong pair or timeframe will result in no trades.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Do I need a VPS to run the EA?</h4>
+          <p>A VPS is strongly recommended but not strictly required. Without a VPS, the EA only runs while your computer is on and MetaTrader is open. A VPS ensures 24/5 uptime. We recommend <a href="https://www.forexvps.net/?aff=67839" target="_blank">ForexVPS</a> for low-latency hosting.</p>
+        </div>
+        <div class="faq-item">
+          <h4>What broker settings are required?</h4>
+          <p>We recommend Raw Spread or ECN account types for the tightest spreads. Leverage of 1:100 or higher is optimal. Hedging must be enabled on your account (important for MT5). <a href="https://icmarkets.com/?camp=85950" target="_blank">IC Markets</a> and <a href="https://portal.fpmarkets.com/register?redir=stv&fpm-affiliate-utm-source=IB&fpm-affiliate-agt=60977" target="_blank">FP Markets</a> both offer suitable account types.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Can I use the EA on multiple accounts?</h4>
+          <p>MQL5 Market licenses allow activation on a limited number of accounts (typically 5–10 activations). Check your remaining activations in your MQL5 account under "Purchases". If you need more, contact us via <a href="https://discord.gg/gH3RJWRJKS" target="_blank">Discord</a>.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Where can I get help with setup?</h4>
+          <p>Join our <a href="https://discord.gg/gH3RJWRJKS" target="_blank">Discord server</a> for live support from the development team and community. We offer real-time installation help, settings optimisation, and troubleshooting. You can also email us at <a href="mailto:swiftcapeas@gmail.com">swiftcapeas@gmail.com</a>.</p>
+        </div>
+        <div class="faq-item">
+          <h4>How do I update to a newer EA version?</h4>
+          <p>Updates are delivered automatically through MQL5 Market. When a new version is released, MetaTrader will notify you. Accept the update and the latest version replaces the old one. Check the updated PDF guide or <a href="https://discord.gg/gH3RJWRJKS" target="_blank">Discord</a> for release notes.</p>
+        </div>
+        <div class="faq-item">
+          <h4>What minimum balance do I need?</h4>
+          <p>We recommend a minimum balance of $500 per EA for optimal performance. Running multiple EAs simultaneously requires proportionally more capital. Join our <a href="https://discord.gg/gH3RJWRJKS" target="_blank">Discord</a> for personalised capital allocation advice.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -1049,15 +878,6 @@
       link.addEventListener('click', () => {
         document.getElementById('navLinks').classList.remove('open');
         document.getElementById('navActions').classList.remove('open');
-      });
-    });
-
-    // FAQ accordion
-    document.querySelectorAll('.faq-item').forEach(item => {
-      item.querySelector('.faq-q').addEventListener('click', () => {
-        const isOpen = item.classList.contains('open');
-        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-        if (!isOpen) item.classList.add('open');
       });
     });
 
