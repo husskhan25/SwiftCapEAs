@@ -113,7 +113,8 @@
             if (search) params.set('search', search);
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/users?${params}`, {
+                params.set('action', 'users');
+                const response = await fetch(`${API_BASE}/api/admin/manage?${params}`, {
                     headers: { 'Authorization': `Bearer ${adminToken}` }
                 });
 
