@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/png" href="/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #060e1c;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .topnav {
+            background: #0a1628;
+            border-bottom: 1px solid #1a2a4a;
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .topnav-left { display: flex; align-items: center; gap: 16px; }
+        .topnav-left img { height: 30px; }
+        .topnav-left span { color: #8a9bba; font-size: 14px; }
+        .topnav-left nav { display: flex; gap: 4px; margin-left: 10px; }
+
+        .topnav-left nav a {
+            color: #8a9bba;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+
+        .topnav-left nav a:hover { color: #fff; background: #1a2a4a; }
+        .topnav-left nav a.active { color: #FFB91E; background: rgba(255,185,30,0.1); }
+
+        .btn-logout {
+            background: none;
+            border: 1px solid #1a2a4a;
+            color: #8a9bba;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-logout:hover { border-color: #ff4444; color: #ff4444; }
+
+        .main { max-width: 1100px; margin: 24px auto; padding: 0 20px; }
+
+        .page-title { font-size: 22px; color: #FFB91E; margin-bottom: 20px; }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 10px 14px;
+            background: #0a1628;
+            border: 1px solid #1a2a4a;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-bar input:focus { border-color: #FFB91E; }
+
+        .search-bar select {
+            padding: 10px 14px;
+            background: #0a1628;
+            border: 1px solid #1a2a4a;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .btn-create {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #FFB91E, #e5a617);
+            color: #060e1c;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-create:hover { opacity: 0.9; }
+
+        /* Table */
+        .table-wrap {
+            background: #0a1628;
+            border: 1px solid #1a2a4a;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 14px;
+            color: #8a9bba;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #1a2a4a;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #0d1a30;
+            color: #c0c8d8;
+            white-space: nowrap;
+        }
+
+        tr:hover td { background: #0d1a30; }
+
+        .key-text { font-family: monospace; color: #FFB91E; font-size: 12px; }
+
+        .badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .b-active { background: rgba(34,197,94,0.15); color: #22c55e; }
+        .b-expired { background: rgba(255,68,68,0.15); color: #ff4444; }
+        .b-managing { background: rgba(255,185,30,0.15); color: #FFB91E; }
+        .b-revoked { background: rgba(255,68,68,0.15); color: #ff4444; }
+        .b-lifetime { background: rgba(34,197,94,0.1); color: #22c55e; }
+        .b-monthly { background: rgba(59,130,246,0.1); color: #3b82f6; }
+        .b-quarterly { background: rgba(168,85,247,0.1); color: #a855f7; }
+
+        .btn-action {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            border: 1px solid #1a2a4a;
+            background: none;
+            color: #8a9bba;
+            margin-right: 4px;
+        }
+
+        .btn-action:hover { background: #1a2a4a; color: #fff; }
+        .btn-action.danger { border-color: rgba(255,68,68,0.3); color: #ff6666; }
+        .btn-action.danger:hover { background: rgba(255,68,68,0.1); }
+
+        .loading { text-align: center; color: #8a9bba; padding: 40px; }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            background: #0a1628;
+            border: 1px solid #1a2a4a;
+            border-radius: 12px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 { font-size: 18px; color: #FFB91E; margin-bottom: 20px; }
+
+        .modal .form-group { margin-bottom: 16px; }
+
+        .modal .form-group label {
+            display: block;
+            color: #8a9bba;
+            font-size: 12px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .modal .form-group input,
+        .modal .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            background: #060e1c;
+            border: 1px solid #1a2a4a;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .modal .form-group input:focus,
+        .modal .form-group select:focus { border-color: #FFB91E; }
+
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #c0c8d8;
+            font-size: 13px;
+            text-transform: none;
+            cursor: pointer;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            accent-color: #FFB91E;
+        }
+
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+        .btn-modal-cancel {
+            flex: 1;
+            padding: 12px;
+            background: #1a2a4a;
+            color: #8a9bba;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-modal-submit {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(135deg, #FFB91E, #e5a617);
+            color: #060e1c;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-modal-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .error-message {
+            background: rgba(255,68,68,0.1);
+            border: 1px solid rgba(255,68,68,0.3);
+            color: #ff6666;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        .success-message {
+            background: rgba(34,197,94,0.1);
+            border: 1px solid rgba(34,197,94,0.3);
+            color: #22c55e;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .search-bar { flex-direction: column; }
+            table { font-size: 11px; }
+            th, td { padding: 8px 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topnav">
+        <div class="topnav-left">
+            <img src="/logo.png" alt="">
+            <span>Admin</span>
+            <nav>
+                <a href="/sc-admin-panel/dashboard" class="active">Licenses</a>
+                <a href="/sc-admin-panel/products">Products</a>
+                <a href="/sc-admin-panel/users">Users</a>
+                <a href="/sc-admin-panel/settings">Settings</a>
+            </nav>
+        </div>
+        <button class="btn-logout" onclick="adminLogout()">Log Out</button>
+    </div>
+
+    <div class="main">
+        <h1 class="page-title">Licenses</h1>
+
+        <div class="success-message" id="successMsg"></div>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search by email or license key..." onkeyup="debounceSearch()">
+            <select id="statusFilter" onchange="loadLicenses()">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="expired_managing">Expiring</option>
+                <option value="expired">Expired</option>
+                <option value="revoked">Revoked</option>
+            </select>
+            <select id="productFilter" onchange="loadLicenses()">
+                <option value="">All Products</option>
+                <option value="master">Master EA</option>
+                <option value="breakout">Breakout EA</option>
+                <option value="grid">Grid EA</option>
+                <option value="trinity">Trinity EA</option>
+            </select>
+            <button class="btn-create" onclick="openCreateModal()">+ Create License</button>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>License Key</th>
+                        <th>Customer</th>
+                        <th>Product</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Accounts</th>
+                        <th>Hardware</th>
+                        <th>Source</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="licensesTable">
+                    <tr><td colspan="10" class="loading">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Create License Modal -->
+    <div class="modal-overlay" id="createModal">
+        <div class="modal">
+            <h2>Create License</h2>
+            <div class="error-message" id="createError"></div>
+
+            <div class="form-group">
+                <label>Customer Email *</label>
+                <input type="email" id="createEmail" placeholder="customer@email.com">
+            </div>
+
+            <div class="form-group">
+                <label>Customer Name</label>
+                <input type="text" id="createName" placeholder="Optional">
+            </div>
+
+            <div class="form-group">
+                <label>Products *</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" value="master"> Master EA</label>
+                    <label><input type="checkbox" value="breakout"> Breakout EA</label>
+                    <label><input type="checkbox" value="grid"> Grid EA</label>
+                    <label><input type="checkbox" value="trinity"> Trinity EA</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>License Type *</label>
+                <select id="createType">
+                    <option value="lifetime">Lifetime</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Max Accounts (leave empty for product default)</label>
+                <input type="number" id="createMaxAccounts" placeholder="Default: 5">
+            </div>
+
+            <div class="form-group">
+                <label>Max Hardware (leave empty for product default)</label>
+                <input type="number" id="createMaxHardware" placeholder="Default: 2">
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="createSendEmail" checked style="width:auto; accent-color:#FFB91E;">
+                    Send welcome email with license key(s)
+                </label>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" onclick="closeCreateModal()">Cancel</button>
+                <button class="btn-modal-submit" id="createBtn" onclick="createLicense()">Create License</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit License Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <h2>Edit License</h2>
+            <div class="error-message" id="editError"></div>
+
+            <div class="form-group">
+                <label>License Key</label>
+                <input type="text" id="editKey" disabled style="color:#FFB91E; font-family:monospace;">
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select id="editStatus">
+                    <option value="active">Active</option>
+                    <option value="expired_managing">Expired (Managing)</option>
+                    <option value="expired">Expired</option>
+                    <option value="revoked">Revoked</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Max Accounts</label>
+                <input type="number" id="editMaxAccounts">
+            </div>
+
+            <div class="form-group">
+                <label>Max Hardware</label>
+                <input type="number" id="editMaxHardware">
+            </div>
+
+            <input type="hidden" id="editLicenseId">
+
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" onclick="closeEditModal()">Cancel</button>
+                <button class="btn-modal-submit" id="editBtn" onclick="saveLicense()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://api.swiftcapeas.com';
+        const adminToken = localStorage.getItem('sc_admin_token');
+
+        if (!adminToken) { window.location.href = '/sc-admin-panel'; }
+
+        let searchTimeout;
+
+        function adminLogout() {
+            localStorage.removeItem('sc_admin_token');
+            localStorage.removeItem('sc_admin');
+            window.location.href = '/sc-admin-panel';
+        }
+
+        function debounceSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(loadLicenses, 400);
+        }
+
+        function formatDate(d) {
+            if (!d) return '—';
+            return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function statusBadge(s) {
+            const map = { active: 'b-active', expired: 'b-expired', expired_managing: 'b-managing', revoked: 'b-revoked' };
+            return `<span class="badge ${map[s] || ''}">${s}</span>`;
+        }
+
+        function typeBadge(t) {
+            const map = { lifetime: 'b-lifetime', monthly: 'b-monthly', quarterly: 'b-quarterly' };
+            return `<span class="badge ${map[t] || ''}">${t}</span>`;
+        }
+
+        async function loadLicenses() {
+            const search = document.getElementById('searchInput').value;
+            const status = document.getElementById('statusFilter').value;
+            const product = document.getElementById('productFilter').value;
+
+            const params = new URLSearchParams();
+            if (search) params.set('search', search);
+            if (status) params.set('status', status);
+            if (product) params.set('product_slug', product);
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/licenses?${params}`, {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+
+                if (response.status === 401) { adminLogout(); return; }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    renderTable(data.licenses);
+                }
+            } catch (error) {
+                document.getElementById('licensesTable').innerHTML =
+                    '<tr><td colspan="10" class="loading">Failed to load. Refresh the page.</td></tr>';
+            }
+        }
+
+        function renderTable(licenses) {
+            const tbody = document.getElementById('licensesTable');
+
+            if (!licenses || licenses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" class="loading">No licenses found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = licenses.map(l => `
+                <tr>
+                    <td><span class="key-text">${l.license_key}</span></td>
+                    <td>${l.user_email || '—'}</td>
+                    <td>${l.product_name || '—'}</td>
+                    <td>${typeBadge(l.type)}</td>
+                    <td>${statusBadge(l.status)}</td>
+                    <td>${l.accounts_used}/${l.max_accounts}</td>
+                    <td>${l.hardware_used}/${l.max_hardware}</td>
+                    <td>${l.source}</td>
+                    <td>${formatDate(l.created_at)}</td>
+                    <td>
+                        <button class="btn-action" onclick='openEditModal(${JSON.stringify(l)})'>Edit</button>
+                        ${l.status === 'active' ? `<button class="btn-action danger" onclick="revokeLicense('${l.id}')">Revoke</button>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Create License Modal
+        function openCreateModal() { document.getElementById('createModal').classList.add('show'); }
+        function closeCreateModal() { document.getElementById('createModal').classList.remove('show'); }
+
+        async function createLicense() {
+            const btn = document.getElementById('createBtn');
+            const email = document.getElementById('createEmail').value.trim();
+            const name = document.getElementById('createName').value.trim();
+            const type = document.getElementById('createType').value;
+            const maxAcc = document.getElementById('createMaxAccounts').value;
+            const maxHw = document.getElementById('createMaxHardware').value;
+            const sendEmail = document.getElementById('createSendEmail').checked;
+
+            const checkboxes = document.querySelectorAll('#createModal .checkbox-group input:checked');
+            const productSlugs = Array.from(checkboxes).map(cb => cb.value);
+
+            if (!email || productSlugs.length === 0) {
+                document.getElementById('createError').textContent = 'Email and at least one product are required';
+                document.getElementById('createError').style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Creating...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/create-license`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify({
+                        email,
+                        name: name || undefined,
+                        product_slugs: productSlugs,
+                        license_type: type,
+                        max_accounts: maxAcc ? parseInt(maxAcc) : undefined,
+                        max_hardware: maxHw ? parseInt(maxHw) : undefined,
+                        send_email: sendEmail
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    closeCreateModal();
+                    const msg = document.getElementById('successMsg');
+                    msg.textContent = data.message;
+                    msg.style.display = 'block';
+                    setTimeout(() => msg.style.display = 'none', 5000);
+                    loadLicenses();
+
+                    // Reset form
+                    document.getElementById('createEmail').value = '';
+                    document.getElementById('createName').value = '';
+                    document.querySelectorAll('#createModal .checkbox-group input').forEach(cb => cb.checked = false);
+                } else {
+                    document.getElementById('createError').textContent = data.error;
+                    document.getElementById('createError').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('createError').textContent = 'Connection error';
+                document.getElementById('createError').style.display = 'block';
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Create License';
+        }
+
+        // Edit License Modal
+        function openEditModal(license) {
+            document.getElementById('editKey').value = license.license_key;
+            document.getElementById('editStatus').value = license.status;
+            document.getElementById('editMaxAccounts').value = license.max_accounts;
+            document.getElementById('editMaxHardware').value = license.max_hardware;
+            document.getElementById('editLicenseId').value = license.id;
+            document.getElementById('editModal').classList.add('show');
+        }
+
+        function closeEditModal() { document.getElementById('editModal').classList.remove('show'); }
+
+        async function saveLicense() {
+            const btn = document.getElementById('editBtn');
+            const licenseId = document.getElementById('editLicenseId').value;
+            const status = document.getElementById('editStatus').value;
+            const maxAccounts = parseInt(document.getElementById('editMaxAccounts').value);
+            const maxHardware = parseInt(document.getElementById('editMaxHardware').value);
+
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/licenses`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify({
+                        license_id: licenseId,
+                        status,
+                        max_accounts: maxAccounts,
+                        max_hardware: maxHardware
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    closeEditModal();
+                    loadLicenses();
+                } else {
+                    document.getElementById('editError').textContent = data.error;
+                    document.getElementById('editError').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('editError').textContent = 'Connection error';
+                document.getElementById('editError').style.display = 'block';
+            }
+
+            btn.disabled = false;
+        }
+
+        async function revokeLicense(id) {
+            if (!confirm('Are you sure you want to revoke this license? The EA will stop working for this customer.')) return;
+
+            try {
+                await fetch(`${API_BASE}/api/admin/licenses`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify({ license_id: id, status: 'revoked' })
+                });
+                loadLicenses();
+            } catch (error) {
+                alert('Failed to revoke');
+            }
+        }
+
+        loadLicenses();
+    </script>
+</body>
+</html>
