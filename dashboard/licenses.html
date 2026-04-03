@@ -378,13 +378,13 @@
             if (!confirm('Remove this activation? The account slot will be freed up.')) return;
 
             try {
-                const response = await fetch(`${API_BASE}/api/dashboard/activations`, {
-                    method: 'DELETE',
+                const response = await fetch(`${API_BASE}/api/dashboard/account`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ activation_id: activationId })
+                    body: JSON.stringify({ action: 'deactivate', activation_id: activationId })
                 });
 
                 const data = await response.json();
