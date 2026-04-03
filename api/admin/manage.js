@@ -1,8 +1,8 @@
-const { supabase } = require('../lib/supabase');
-const { requireAdmin, handleCors, errorResponse } = require('../lib/middleware');
-const { createLicense } = require('../lib/license');
-const { generateSecureToken } = require('../lib/auth');
-const { sendWelcomeEmail } = require('../lib/email');
+const { supabase } = require('../../lib/supabase');
+const { requireAdmin, handleCors, errorResponse } = require('../../lib/middleware');
+const { createLicense } = require('../../lib/license');
+const { generateSecureToken } = require('../../lib/auth');
+const { sendWelcomeEmail } = require('../../lib/email');
 
 module.exports = async function handler(req, res) {
     if (handleCors(req, res)) return;

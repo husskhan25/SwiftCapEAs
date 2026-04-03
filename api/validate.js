@@ -1,6 +1,6 @@
-const { validateLicense } = require('./lib/license');
-const { checkRateLimit } = require('./lib/rate-limit');
-const { supabase } = require('./lib/supabase');
+const { validateLicense } = require('../lib/license');
+const { checkRateLimit } = require('../lib/rate-limit');
+const { supabase } = require('../lib/supabase');
 
 module.exports = async function handler(req, res) {
     // Only POST allowed

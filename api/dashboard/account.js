@@ -1,6 +1,6 @@
-const { supabase } = require('../lib/supabase');
-const { requireCustomer, handleCors, errorResponse } = require('../lib/middleware');
-const { hashPassword, verifyPassword } = require('../lib/auth');
+const { supabase } = require('../../lib/supabase');
+const { requireCustomer, handleCors, errorResponse } = require('../../lib/middleware');
+const { hashPassword, verifyPassword } = require('../../lib/auth');
 
 module.exports = async function handler(req, res) {
     if (handleCors(req, res)) return;

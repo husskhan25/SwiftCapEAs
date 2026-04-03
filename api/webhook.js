@@ -1,8 +1,8 @@
 const crypto = require('crypto');
-const { supabase } = require('./lib/supabase');
-const { createLicense } = require('./lib/license');
-const { generateSecureToken } = require('./lib/auth');
-const { sendWelcomeEmail } = require('./lib/email');
+const { supabase } = require('../lib/supabase');
+const { createLicense } = require('../lib/license');
+const { generateSecureToken } = require('../lib/auth');
+const { sendWelcomeEmail } = require('../lib/email');
 
 const WHOP_WEBHOOK_SECRET = process.env.WHOP_WEBHOOK_SECRET;
 
