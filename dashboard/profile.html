@@ -245,7 +245,7 @@
 
         async function loadProfile() {
             try {
-                const response = await fetch(`${API_BASE}/api/dashboard/profile`, {
+                const response = await fetch(`${API_BASE}/api/dashboard/account?action=profile`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
@@ -271,13 +271,13 @@
             btn.textContent = 'Saving...';
 
             try {
-                const response = await fetch(`${API_BASE}/api/dashboard/profile`, {
-                    method: 'PUT',
+                const response = await fetch(`${API_BASE}/api/dashboard/account`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ name })
+                    body: JSON.stringify({ action: 'update-profile', name })
                 });
 
                 const data = await response.json();
@@ -327,13 +327,13 @@
             btn.textContent = 'Changing...';
 
             try {
-                const response = await fetch(`${API_BASE}/api/dashboard/profile`, {
-                    method: 'PUT',
+                const response = await fetch(`${API_BASE}/api/dashboard/account`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ current_password: currentPassword, new_password: newPassword })
+                    body: JSON.stringify({ action: 'update-profile', current_password: currentPassword, new_password: newPassword })
                 });
 
                 const data = await response.json();
