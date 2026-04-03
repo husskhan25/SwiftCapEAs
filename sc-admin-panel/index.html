@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/png" href="/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #060e1c;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container { width: 100%; max-width: 400px; padding: 20px; }
+
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo img { height: 40px; margin-bottom: 12px; }
+        .logo h1 { font-size: 18px; color: #8a9bba; }
+
+        .card {
+            background: #0a1628;
+            border: 1px solid #1a2a4a;
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .form-group { margin-bottom: 18px; }
+
+        .form-group label {
+            display: block;
+            color: #8a9bba;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            background: #060e1c;
+            border: 1px solid #1a2a4a;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .form-group input:focus { border-color: #FFB91E; }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: #1a2a4a;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-login:hover { background: #2a3a5a; }
+        .btn-login:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .error-message {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            color: #ff6666;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        #totpSection { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="logo">
+            <img src="/logo.png" alt="">
+            <h1>Administration</h1>
+        </div>
+
+        <div class="card">
+            <div class="error-message" id="errorMsg"></div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div id="credSection">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="password" required>
+                    </div>
+                </div>
+
+                <div id="totpSection">
+                    <div class="form-group">
+                        <label>Authenticator Code</label>
+                        <input type="text" id="totpCode" placeholder="6-digit code" maxlength="6" autocomplete="off">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">Log In</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://api.swiftcapeas.com';
+        let pendingEmail = '';
+        let pendingPassword = '';
+
+        if (localStorage.getItem('sc_admin_token')) {
+            window.location.href = '/sc-admin-panel/dashboard';
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+
+            const email = document.getElementById('email').value || pendingEmail;
+            const password = document.getElementById('password').value || pendingPassword;
+            const totpCode = document.getElementById('totpCode').value;
+
+            btn.disabled = true;
+            btn.textContent = 'Verifying...';
+
+            try {
+                const body = { email, password };
+                if (totpCode) body.totp_code = totpCode;
+
+                const response = await fetch(`${API_BASE}/api/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.token) {
+                    localStorage.setItem('sc_admin_token', data.token);
+                    localStorage.setItem('sc_admin', JSON.stringify(data.admin));
+                    window.location.href = '/sc-admin-panel/dashboard';
+                } else if (data.requires_2fa) {
+                    pendingEmail = email;
+                    pendingPassword = password;
+                    document.getElementById('credSection').style.display = 'none';
+                    document.getElementById('totpSection').style.display = 'block';
+                    document.getElementById('totpCode').focus();
+                    btn.disabled = false;
+                    btn.textContent = 'Verify';
+                } else {
+                    showError(data.error || 'Login failed');
+                    btn.disabled = false;
+                    btn.textContent = 'Log In';
+                }
+            } catch (error) {
+                showError('Connection error');
+                btn.disabled = false;
+                btn.textContent = 'Log In';
+            }
+        }
+    </script>
+</body>
+</html>
