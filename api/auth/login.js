@@ -1,7 +1,7 @@
-const { supabase } = require('../lib/supabase');
-const { verifyPassword, generateToken } = require('../lib/auth');
-const { checkRateLimit } = require('../lib/rate-limit');
-const { handleCors, errorResponse } = require('../lib/middleware');
+const { supabase } = require('../../lib/supabase');
+const { verifyPassword, generateToken } = require('../../lib/auth');
+const { checkRateLimit } = require('../../lib/rate-limit');
+const { handleCors, errorResponse } = require('../../lib/middleware');
 
 module.exports = async function handler(req, res) {
     if (handleCors(req, res)) return;

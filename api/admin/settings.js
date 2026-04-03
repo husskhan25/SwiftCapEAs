@@ -1,6 +1,6 @@
-const { supabase } = require('../lib/supabase');
-const { requireAdmin, handleCors, errorResponse } = require('../lib/middleware');
-const { hashPassword } = require('../lib/auth');
+const { supabase } = require('../../lib/supabase');
+const { requireAdmin, handleCors, errorResponse } = require('../../lib/middleware');
+const { hashPassword } = require('../../lib/auth');
 const { authenticator } = require('otplib');
 const QRCode = require('qrcode');
 
