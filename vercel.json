@@ -1,4 +1,5 @@
 {
+  "cleanUrls": true,
   "rewrites": [
     { "source": "/dashboard", "destination": "/dashboard/index.html" },
     { "source": "/dashboard/licenses", "destination": "/dashboard/licenses.html" },
