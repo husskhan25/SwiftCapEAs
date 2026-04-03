@@ -140,7 +140,7 @@
 
         async function loadProducts() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/products`, {
+                const response = await fetch(`${API_BASE}/api/admin/settings?action=products`, {
                     headers: { 'Authorization': `Bearer ${adminToken}` }
                 });
 
@@ -183,13 +183,13 @@
             btn.textContent = 'Saving...';
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/products`, {
+                const response = await fetch(`${API_BASE}/api/admin/settings`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${adminToken}`
                     },
-                    body: JSON.stringify({ product_id: id, max_accounts: maxAccounts, max_hardware: maxHardware })
+                    body: JSON.stringify({ action: 'update-product', product_id: id, max_accounts: maxAccounts, max_hardware: maxHardware })
                 });
 
                 const data = await response.json();
