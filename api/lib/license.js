@@ -1,0 +1,217 @@
+const crypto = require('crypto');
+const { supabase } = require('./supabase');
+
+/**
+ * Generate a random license key with product prefix
+ * Format: SC-MST-XXXX-XXXX-XXXX
+ * Uses cryptographically secure random generation
+ */
+function generateLicenseKey(prefix) {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // removed 0,O,1,I to avoid confusion
+    const groups = [];
+
+    for (let g = 0; g < 3; g++) {
+        let group = '';
+        for (let i = 0; i < 4; i++) {
+            const randomIndex = crypto.randomInt(0, chars.length);
+            group += chars[randomIndex];
+        }
+        groups.push(group);
+    }
+
+    return `${prefix}-${groups.join('-')}`;
+}
+
+/**
+ * Create a license for a user and product
+ * Returns the created license object
+ */
+async function createLicense(userId, productId, type, source, whopMembershipId, maxAccountsOverride, maxHardwareOverride) {
+    // Get product prefix
+    const { data: product, error: productError } = await supabase
+        .from('products')
+        .select('key_prefix')
+        .eq('id', productId)
+        .single();
+
+    if (productError || !product) {
+        throw new Error('Product not found');
+    }
+
+    // Generate unique key (retry if collision, extremely unlikely)
+    let licenseKey;
+    let attempts = 0;
+    const maxAttempts = 5;
+
+    while (attempts < maxAttempts) {
+        licenseKey = generateLicenseKey(product.key_prefix);
+
+        const { data: existing } = await supabase
+            .from('licenses')
+            .select('id')
+            .eq('license_key', licenseKey)
+            .single();
+
+        if (!existing) break;
+        attempts++;
+    }
+
+    if (attempts >= maxAttempts) {
+        throw new Error('Failed to generate unique license key');
+    }
+
+    // Calculate expiry
+    let expiresAt = null;
+    if (type === 'monthly') {
+        expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    } else if (type === 'quarterly') {
+        expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
+    }
+    // lifetime = null (never expires)
+
+    const { data: license, error } = await supabase
+        .from('licenses')
+        .insert({
+            license_key: licenseKey,
+            user_id: userId,
+            product_id: productId,
+            type: type,
+            status: 'active',
+            max_accounts: maxAccountsOverride || null,
+            max_hardware: maxHardwareOverride || null,
+            source: source,
+            whop_membership_id: whopMembershipId || null,
+            expires_at: expiresAt
+        })
+        .select()
+        .single();
+
+    if (error) {
+        throw new Error(`Failed to create license: ${error.message}`);
+    }
+
+    return license;
+}
+
+/**
+ * Validate a license from EA request
+ * Returns { valid, status, message, license }
+ */
+async function validateLicense(licenseKey, mtAccount, hardwareId, productSlug) {
+    // Find the license with product info
+    const { data: license, error } = await supabase
+        .from('licenses')
+        .select(`
+            *,
+            product:products(*)
+        `)
+        .eq('license_key', licenseKey)
+        .single();
+
+    if (error || !license) {
+        return { valid: false, status: 'invalid_key', message: 'Invalid license key. Please check your key and try again.' };
+    }
+
+    // Check product match
+    if (license.product.slug !== productSlug) {
+        return { valid: false, status: 'product_mismatch', message: `This license key is for ${license.product.name}, not this EA.` };
+    }
+
+    // Check if revoked
+    if (license.status === 'revoked') {
+        return { valid: false, status: 'revoked', message: 'This license has been revoked. Contact support at team@swiftcapeas.com' };
+    }
+
+    // Check if expired
+    if (license.status === 'expired') {
+        return { valid: false, status: 'expired', message: 'Your license has expired. Renew at https://whop.com/swiftcap-eas/' };
+    }
+
+    // Check if expired but managing existing trades
+    if (license.status === 'expired_managing') {
+        return {
+            valid: true,
+            status: 'expired_managing',
+            message: 'License expired. No new trades will be opened. Existing positions will be managed until closed.',
+            license: license
+        };
+    }
+
+    // Check expiry date for subscription licenses
+    if (license.expires_at && new Date(license.expires_at) < new Date()) {
+        // Mark as expired_managing (stop new trades, manage existing)
+        await supabase
+            .from('licenses')
+            .update({ status: 'expired_managing' })
+            .eq('id', license.id);
+
+        return {
+            valid: true,
+            status: 'expired_managing',
+            message: 'License expired. No new trades will be opened. Existing positions will be managed until closed.',
+            license: license
+        };
+    }
+
+    // Get effective limits
+    const maxAccounts = license.max_accounts || license.product.max_accounts;
+    const maxHardware = license.max_hardware || license.product.max_hardware;
+
+    // Get current activations
+    const { data: activations } = await supabase
+        .from('activations')
+        .select('*')
+        .eq('license_id', license.id)
+        .eq('is_active', true);
+
+    const currentActivations = activations || [];
+
+    // Check if this exact combination already exists (returning user)
+    const existingActivation = currentActivations.find(
+        a => a.mt_account_number === mtAccount && a.hardware_id === hardwareId
+    );
+
+    if (existingActivation) {
+        // Update last_seen_at
+        await supabase
+            .from('activations')
+            .update({ last_seen_at: new Date().toISOString() })
+            .eq('id', existingActivation.id);
+
+        return { valid: true, status: 'valid', message: 'License valid.', license: license };
+    }
+
+    // Check hardware limit
+    const uniqueHardware = [...new Set(currentActivations.map(a => a.hardware_id))];
+    if (!uniqueHardware.includes(hardwareId) && uniqueHardware.length >= maxHardware) {
+        return {
+            valid: false,
+            status: 'hardware_limit',
+            message: `Hardware limit reached (${maxHardware} machines). Remove a device at swiftcapeas.com/dashboard`
+        };
+    }
+
+    // Check account limit
+    const uniqueAccounts = [...new Set(currentActivations.map(a => a.mt_account_number))];
+    if (!uniqueAccounts.includes(mtAccount) && uniqueAccounts.length >= maxAccounts) {
+        return {
+            valid: false,
+            status: 'account_limit',
+            message: `Account limit reached (${maxAccounts} accounts). Remove an account at swiftcapeas.com/dashboard`
+        };
+    }
+
+    // All checks passed — create activation
+    await supabase
+        .from('activations')
+        .insert({
+            license_id: license.id,
+            mt_account_number: mtAccount,
+            hardware_id: hardwareId,
+            is_active: true
+        });
+
+    return { valid: true, status: 'valid', message: 'License valid. Activation registered.', license: license };
+}
+
+module.exports = { generateLicenseKey, createLicense, validateLicense };
