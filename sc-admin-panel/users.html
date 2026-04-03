@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users — Admin</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/png" href="/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #060e1c; color: #fff; min-height: 100vh; }
+
+        .topnav { background: #0a1628; border-bottom: 1px solid #1a2a4a; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+        .topnav-left { display: flex; align-items: center; gap: 16px; }
+        .topnav-left img { height: 30px; }
+        .topnav-left span { color: #8a9bba; font-size: 14px; }
+        .topnav-left nav { display: flex; gap: 4px; margin-left: 10px; }
+        .topnav-left nav a { color: #8a9bba; text-decoration: none; font-size: 13px; padding: 6px 12px; border-radius: 4px; }
+        .topnav-left nav a:hover { color: #fff; background: #1a2a4a; }
+        .topnav-left nav a.active { color: #FFB91E; background: rgba(255,185,30,0.1); }
+        .btn-logout { background: none; border: 1px solid #1a2a4a; color: #8a9bba; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+        .btn-logout:hover { border-color: #ff4444; color: #ff4444; }
+
+        .main { max-width: 900px; margin: 24px auto; padding: 0 20px; }
+        .page-title { font-size: 22px; color: #FFB91E; margin-bottom: 20px; }
+
+        .search-bar { margin-bottom: 20px; }
+        .search-bar input {
+            width: 100%; padding: 10px 14px; background: #0a1628; border: 1px solid #1a2a4a;
+            border-radius: 6px; color: #fff; font-size: 14px; outline: none;
+        }
+        .search-bar input:focus { border-color: #FFB91E; }
+
+        .table-wrap { background: #0a1628; border: 1px solid #1a2a4a; border-radius: 10px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { text-align: left; padding: 12px 14px; color: #8a9bba; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #1a2a4a; }
+        td { padding: 10px 14px; border-bottom: 1px solid #0d1a30; color: #c0c8d8; }
+        tr:hover td { background: #0d1a30; }
+
+        .badge-yes { color: #22c55e; }
+        .badge-no { color: #ff6666; }
+
+        .loading { text-align: center; color: #8a9bba; padding: 40px; }
+    </style>
+</head>
+<body>
+
+    <div class="topnav">
+        <div class="topnav-left">
+            <img src="/logo.png" alt="">
+            <span>Admin</span>
+            <nav>
+                <a href="/sc-admin-panel/dashboard">Licenses</a>
+                <a href="/sc-admin-panel/products">Products</a>
+                <a href="/sc-admin-panel/users" class="active">Users</a>
+                <a href="/sc-admin-panel/settings">Settings</a>
+            </nav>
+        </div>
+        <button class="btn-logout" onclick="adminLogout()">Log Out</button>
+    </div>
+
+    <div class="main">
+        <h1 class="page-title">Users</h1>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search by email or name..." onkeyup="debounceSearch()">
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>Password Set</th>
+                        <th>Active Licenses</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTable">
+                    <tr><td colspan="5" class="loading">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://api.swiftcapeas.com';
+        const adminToken = localStorage.getItem('sc_admin_token');
+        if (!adminToken) { window.location.href = '/sc-admin-panel'; }
+
+        let searchTimeout;
+
+        function adminLogout() {
+            localStorage.removeItem('sc_admin_token');
+            localStorage.removeItem('sc_admin');
+            window.location.href = '/sc-admin-panel';
+        }
+
+        function debounceSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(loadUsers, 400);
+        }
+
+        function formatDate(d) {
+            if (!d) return '—';
+            return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        async function loadUsers() {
+            const search = document.getElementById('searchInput').value;
+            const params = new URLSearchParams();
+            if (search) params.set('search', search);
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/users?${params}`, {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+
+                if (response.status === 401) { adminLogout(); return; }
+
+                const data = await response.json();
+                if (data.success) {
+                    const tbody = document.getElementById('usersTable');
+
+                    if (!data.users || data.users.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" class="loading">No users found</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = data.users.map(u => `
+                        <tr>
+                            <td>${u.email}</td>
+                            <td>${u.name || '—'}</td>
+                            <td><span class="${u.password_set ? 'badge-yes' : 'badge-no'}">${u.password_set ? 'Yes' : 'No'}</span></td>
+                            <td>${u.active_licenses}</td>
+                            <td>${formatDate(u.created_at)}</td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                document.getElementById('usersTable').innerHTML = '<tr><td colspan="5" class="loading">Failed to load</td></tr>';
+            }
+        }
+
+        loadUsers();
+    </script>
+</body>
+</html>
