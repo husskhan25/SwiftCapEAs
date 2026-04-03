@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products — Admin</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/png" href="/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #060e1c; color: #fff; min-height: 100vh; }
+
+        .topnav { background: #0a1628; border-bottom: 1px solid #1a2a4a; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+        .topnav-left { display: flex; align-items: center; gap: 16px; }
+        .topnav-left img { height: 30px; }
+        .topnav-left span { color: #8a9bba; font-size: 14px; }
+        .topnav-left nav { display: flex; gap: 4px; margin-left: 10px; }
+        .topnav-left nav a { color: #8a9bba; text-decoration: none; font-size: 13px; padding: 6px 12px; border-radius: 4px; }
+        .topnav-left nav a:hover { color: #fff; background: #1a2a4a; }
+        .topnav-left nav a.active { color: #FFB91E; background: rgba(255,185,30,0.1); }
+        .btn-logout { background: none; border: 1px solid #1a2a4a; color: #8a9bba; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+        .btn-logout:hover { border-color: #ff4444; color: #ff4444; }
+
+        .main { max-width: 900px; margin: 24px auto; padding: 0 20px; }
+        .page-title { font-size: 22px; color: #FFB91E; margin-bottom: 6px; }
+        .page-desc { color: #8a9bba; font-size: 14px; margin-bottom: 20px; }
+
+        .product-card {
+            background: #0a1628;
+            border: 1px solid #1a2a4a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .product-info h3 { font-size: 16px; margin-bottom: 4px; }
+        .product-info p { color: #8a9bba; font-size: 13px; }
+
+        .product-limits { display: flex; gap: 16px; align-items: center; }
+
+        .limit-input {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+        }
+
+        .limit-input label { color: #8a9bba; font-size: 10px; text-transform: uppercase; }
+
+        .limit-input input {
+            width: 60px;
+            padding: 8px;
+            background: #060e1c;
+            border: 1px solid #1a2a4a;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+            outline: none;
+        }
+
+        .limit-input input:focus { border-color: #FFB91E; }
+
+        .btn-save-product {
+            padding: 8px 16px;
+            background: #1a2a4a;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-save-product:hover { background: #2a3a5a; }
+        .btn-save-product.saved { background: rgba(34,197,94,0.2); color: #22c55e; }
+
+        .success-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(34,197,94,0.15);
+            border: 1px solid rgba(34,197,94,0.3);
+            color: #22c55e;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+            z-index: 999;
+        }
+
+        @media (max-width: 640px) {
+            .product-card { flex-direction: column; gap: 12px; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topnav">
+        <div class="topnav-left">
+            <img src="/logo.png" alt="">
+            <span>Admin</span>
+            <nav>
+                <a href="/sc-admin-panel/dashboard">Licenses</a>
+                <a href="/sc-admin-panel/products" class="active">Products</a>
+                <a href="/sc-admin-panel/users">Users</a>
+                <a href="/sc-admin-panel/settings">Settings</a>
+            </nav>
+        </div>
+        <button class="btn-logout" onclick="adminLogout()">Log Out</button>
+    </div>
+
+    <div class="main">
+        <h1 class="page-title">Products</h1>
+        <p class="page-desc">Manage default account and hardware limits for each product. Changes apply to new licenses only.</p>
+
+        <div id="productsContainer">
+            <div class="loading" style="text-align:center; color:#8a9bba; padding:40px;">Loading products...</div>
+        </div>
+    </div>
+
+    <div class="success-toast" id="toast"></div>
+
+    <script>
+        const API_BASE = 'https://api.swiftcapeas.com';
+        const adminToken = localStorage.getItem('sc_admin_token');
+        if (!adminToken) { window.location.href = '/sc-admin-panel'; }
+
+        function adminLogout() {
+            localStorage.removeItem('sc_admin_token');
+            localStorage.removeItem('sc_admin');
+            window.location.href = '/sc-admin-panel';
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/products`, {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+
+                if (response.status === 401) { adminLogout(); return; }
+
+                const data = await response.json();
+                if (data.success) renderProducts(data.products);
+            } catch (error) {
+                document.getElementById('productsContainer').innerHTML = '<p style="color:#ff6666;">Failed to load products</p>';
+            }
+        }
+
+        function renderProducts(products) {
+            document.getElementById('productsContainer').innerHTML = products.map(p => `
+                <div class="product-card">
+                    <div class="product-info">
+                        <h3>${p.name}</h3>
+                        <p>Prefix: ${p.key_prefix} &nbsp;·&nbsp; Slug: ${p.slug}</p>
+                    </div>
+                    <div class="product-limits">
+                        <div class="limit-input">
+                            <label>Max Accounts</label>
+                            <input type="number" id="acc-${p.id}" value="${p.max_accounts}" min="1">
+                        </div>
+                        <div class="limit-input">
+                            <label>Max Hardware</label>
+                            <input type="number" id="hw-${p.id}" value="${p.max_hardware}" min="1">
+                        </div>
+                        <button class="btn-save-product" id="btn-${p.id}" onclick="saveProduct('${p.id}')">Save</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function saveProduct(id) {
+            const btn = document.getElementById(`btn-${id}`);
+            const maxAccounts = parseInt(document.getElementById(`acc-${id}`).value);
+            const maxHardware = parseInt(document.getElementById(`hw-${id}`).value);
+
+            btn.textContent = 'Saving...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/products`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify({ product_id: id, max_accounts: maxAccounts, max_hardware: maxHardware })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    btn.textContent = 'Saved!';
+                    btn.classList.add('saved');
+                    showToast(data.message);
+                    setTimeout(() => { btn.textContent = 'Save'; btn.classList.remove('saved'); }, 2000);
+                }
+            } catch (error) {
+                btn.textContent = 'Error';
+                setTimeout(() => btn.textContent = 'Save', 2000);
+            }
+        }
+
+        loadProducts();
+    </script>
+</body>
+</html>
