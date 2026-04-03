@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile — SwiftCap EAs</title>
+    <link rel="icon" type="image/png" href="/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #060e1c;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .topnav {
+            background: #0a1628;
+            border-bottom: 1px solid #1a2a4a;
+            padding: 16px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .topnav-left { display: flex; align-items: center; gap: 20px; }
+        .topnav-left img { height: 36px; }
+        .topnav-left nav { display: flex; gap: 6px; }
+
+        .topnav-left nav a {
+            color: #8a9bba;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .topnav-left nav a:hover { color: #ffffff; background: #1a2a4a; }
+        .topnav-left nav a.active { color: #FFB91E; background: rgba(255, 185, 30, 0.1); }
+
+        .topnav-right { display: flex; align-items: center; gap: 16px; }
+        .user-email { color: #8a9bba; font-size: 13px; }
+
+        .btn-logout {
+            background: none;
+            border: 1px solid #1a2a4a;
+            color: #8a9bba;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover { border-color: #ff4444; color: #ff4444; }
+
+        .main-content { max-width: 600px; margin: 30px auto; padding: 0 20px; }
+
+        .page-header { margin-bottom: 30px; }
+        .page-header h1 { font-size: 26px; color: #FFB91E; margin-bottom: 6px; }
+        .page-header p { color: #8a9bba; font-size: 14px; }
+
+        .card {
+            background: #0a1628;
+            border: 1px solid #1a2a4a;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 { font-size: 16px; color: #ffffff; margin-bottom: 16px; }
+
+        .form-group { margin-bottom: 18px; }
+
+        .form-group label {
+            display: block;
+            color: #8a9bba;
+            font-size: 13px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            background: #060e1c;
+            border: 1px solid #1a2a4a;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus { border-color: #FFB91E; }
+        .form-group input::placeholder { color: #4a5a7a; }
+        .form-group input:disabled { opacity: 0.5; }
+
+        .btn-save {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #FFB91E, #e5a617);
+            color: #060e1c;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-save:hover { opacity: 0.9; }
+        .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .error-message {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            color: #ff6666;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .info-item { background: #060e1c; border-radius: 6px; padding: 12px 14px; }
+        .info-label { color: #8a9bba; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .info-value { color: #ffffff; font-size: 14px; }
+
+        @media (max-width: 640px) {
+            .topnav { flex-direction: column; gap: 12px; }
+            .topnav-left { flex-direction: column; align-items: flex-start; }
+            .profile-info { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topnav">
+        <div class="topnav-left">
+            <img src="/logo.png" alt="SwiftCap EAs">
+            <nav>
+                <a href="/dashboard/licenses">Licenses</a>
+                <a href="/dashboard/profile" class="active">Profile</a>
+            </nav>
+        </div>
+        <div class="topnav-right">
+            <span class="user-email" id="userEmail"></span>
+            <button class="btn-logout" onclick="logout()">Log Out</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Profile</h1>
+            <p>Manage your account details</p>
+        </div>
+
+        <!-- Account Info -->
+        <div class="card">
+            <h2>Account Information</h2>
+            <div class="profile-info">
+                <div class="info-item">
+                    <div class="info-label">Email</div>
+                    <div class="info-value" id="profileEmail">—</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Member Since</div>
+                    <div class="info-value" id="profileDate">—</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Name -->
+        <div class="card">
+            <h2>Update Name</h2>
+            <div class="success-message" id="nameSuccess"></div>
+            <div class="error-message" id="nameError"></div>
+            <form onsubmit="updateName(event)">
+                <div class="form-group">
+                    <label>Display Name</label>
+                    <input type="text" id="nameInput" placeholder="Your name">
+                </div>
+                <button type="submit" class="btn-save" id="nameBtn">Save Name</button>
+            </form>
+        </div>
+
+        <!-- Change Password -->
+        <div class="card">
+            <h2>Change Password</h2>
+            <div class="success-message" id="passSuccess"></div>
+            <div class="error-message" id="passError"></div>
+            <form onsubmit="changePassword(event)">
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="currentPassword" placeholder="Enter current password" required>
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="newPassword" placeholder="Enter new password" required minlength="8">
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="confirmNewPassword" placeholder="Confirm new password" required>
+                </div>
+                <button type="submit" class="btn-save" id="passBtn">Change Password</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://api.swiftcapeas.com';
+        const token = localStorage.getItem('sc_token');
+        const user = JSON.parse(localStorage.getItem('sc_user') || '{}');
+
+        if (!token) { window.location.href = '/dashboard'; }
+
+        document.getElementById('userEmail').textContent = user.email || '';
+
+        function logout() {
+            localStorage.removeItem('sc_token');
+            localStorage.removeItem('sc_user');
+            window.location.href = '/dashboard';
+        }
+
+        async function loadProfile() {
+            try {
+                const response = await fetch(`${API_BASE}/api/dashboard/profile`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.status === 401) { logout(); return; }
+
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('profileEmail').textContent = data.profile.email;
+                    document.getElementById('profileDate').textContent = new Date(data.profile.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                    document.getElementById('nameInput').value = data.profile.name || '';
+                }
+            } catch (error) {
+                console.error('Profile load error:', error);
+            }
+        }
+
+        async function updateName(e) {
+            e.preventDefault();
+            const btn = document.getElementById('nameBtn');
+            const name = document.getElementById('nameInput').value.trim();
+
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/dashboard/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('nameSuccess').textContent = 'Name updated successfully';
+                    document.getElementById('nameSuccess').style.display = 'block';
+                    document.getElementById('nameError').style.display = 'none';
+
+                    // Update local storage
+                    const u = JSON.parse(localStorage.getItem('sc_user') || '{}');
+                    u.name = name;
+                    localStorage.setItem('sc_user', JSON.stringify(u));
+                } else {
+                    document.getElementById('nameError').textContent = data.error;
+                    document.getElementById('nameError').style.display = 'block';
+                    document.getElementById('nameSuccess').style.display = 'none';
+                }
+            } catch (error) {
+                document.getElementById('nameError').textContent = 'Connection error';
+                document.getElementById('nameError').style.display = 'block';
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Save Name';
+        }
+
+        async function changePassword(e) {
+            e.preventDefault();
+            const btn = document.getElementById('passBtn');
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+            if (newPassword !== confirmNewPassword) {
+                document.getElementById('passError').textContent = 'New passwords do not match';
+                document.getElementById('passError').style.display = 'block';
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                document.getElementById('passError').textContent = 'New password must be at least 8 characters';
+                document.getElementById('passError').style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Changing...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/dashboard/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ current_password: currentPassword, new_password: newPassword })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('passSuccess').textContent = 'Password changed successfully';
+                    document.getElementById('passSuccess').style.display = 'block';
+                    document.getElementById('passError').style.display = 'none';
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmNewPassword').value = '';
+                } else {
+                    document.getElementById('passError').textContent = data.error;
+                    document.getElementById('passError').style.display = 'block';
+                    document.getElementById('passSuccess').style.display = 'none';
+                }
+            } catch (error) {
+                document.getElementById('passError').textContent = 'Connection error';
+                document.getElementById('passError').style.display = 'block';
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Change Password';
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>
