@@ -1,0 +1,14 @@
+{
+  "name": "swiftcap-licensing",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "otplib": "^12.0.1",
+    "qrcode": "^1.5.4",
+    "resend": "^4.1.0",
+    "uuid": "^11.1.0"
+  }
+}
