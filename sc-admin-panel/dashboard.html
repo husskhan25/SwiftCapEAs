@@ -571,13 +571,14 @@
             btn.textContent = 'Creating...';
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/create-license`, {
+                const response = await fetch(`${API_BASE}/api/admin/manage`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${adminToken}`
                     },
                     body: JSON.stringify({
+                        action: 'create-license',
                         email,
                         name: name || undefined,
                         product_slugs: productSlugs,
