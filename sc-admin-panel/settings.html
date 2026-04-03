@@ -145,7 +145,7 @@
             btn.textContent = 'Generating...';
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/setup-2fa`, {
+                const response = await fetch(`${API_BASE}/api/admin/settings?action=setup-2fa`, {
                     headers: { 'Authorization': `Bearer ${adminToken}` }
                 });
 
@@ -181,13 +181,13 @@
             btn.textContent = 'Verifying...';
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/setup-2fa`, {
+                const response = await fetch(`${API_BASE}/api/admin/settings`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${adminToken}`
                     },
-                    body: JSON.stringify({ totp_code: code })
+                    body: JSON.stringify({ action: 'verify-2fa', totp_code: code })
                 });
 
                 const data = await response.json();
