@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Licenses — SwiftCap EAs</title>
+    <link rel="icon" type="image/png" href="/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #060e1c;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        /* Top Navigation */
+        .topnav {
+            background: #0a1628;
+            border-bottom: 1px solid #1a2a4a;
+            padding: 16px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .topnav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .topnav-left img { height: 36px; }
+
+        .topnav-left nav { display: flex; gap: 6px; }
+
+        .topnav-left nav a {
+            color: #8a9bba;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .topnav-left nav a:hover { color: #ffffff; background: #1a2a4a; }
+        .topnav-left nav a.active { color: #FFB91E; background: rgba(255, 185, 30, 0.1); }
+
+        .topnav-right { display: flex; align-items: center; gap: 16px; }
+
+        .user-email { color: #8a9bba; font-size: 13px; }
+
+        .btn-logout {
+            background: none;
+            border: 1px solid #1a2a4a;
+            color: #8a9bba;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover { border-color: #ff4444; color: #ff4444; }
+
+        /* Main Content */
+        .main-content {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 26px;
+            color: #FFB91E;
+            margin-bottom: 6px;
+        }
+
+        .page-header p { color: #8a9bba; font-size: 14px; }
+
+        /* License Card */
+        .license-card {
+            background: #0a1628;
+            border: 1px solid #1a2a4a;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: border-color 0.2s;
+        }
+
+        .license-card:hover { border-color: #2a3a5a; }
+
+        .license-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .license-product-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .license-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-active { background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .badge-expired { background: rgba(255, 68, 68, 0.15); color: #ff4444; border: 1px solid rgba(255, 68, 68, 0.3); }
+        .badge-managing { background: rgba(255, 185, 30, 0.15); color: #FFB91E; border: 1px solid rgba(255, 185, 30, 0.3); }
+        .badge-revoked { background: rgba(255, 68, 68, 0.15); color: #ff4444; border: 1px solid rgba(255, 68, 68, 0.3); }
+
+        .license-key-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .license-key {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            color: #FFB91E;
+            letter-spacing: 2px;
+            background: #060e1c;
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: 1px solid #1a2a4a;
+            flex: 1;
+        }
+
+        .btn-copy {
+            background: #1a2a4a;
+            border: none;
+            color: #8a9bba;
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-copy:hover { background: #2a3a5a; color: #ffffff; }
+        .btn-copy.copied { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+
+        .license-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .meta-item {
+            background: #060e1c;
+            border-radius: 6px;
+            padding: 10px 14px;
+        }
+
+        .meta-label { color: #8a9bba; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .meta-value { color: #ffffff; font-size: 14px; font-weight: 600; }
+
+        /* Activations */
+        .activations-section {
+            margin-top: 16px;
+            border-top: 1px solid #1a2a4a;
+            padding-top: 16px;
+        }
+
+        .activations-title {
+            color: #8a9bba;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .activation-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #060e1c;
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin-bottom: 6px;
+        }
+
+        .activation-info { display: flex; align-items: center; gap: 12px; }
+        .activation-account { color: #ffffff; font-size: 14px; font-weight: 500; }
+        .activation-hardware { color: #8a9bba; font-size: 12px; }
+        .activation-date { color: #8a9bba; font-size: 12px; }
+
+        .btn-deactivate {
+            background: none;
+            border: 1px solid #1a2a4a;
+            color: #ff6666;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-deactivate:hover { background: rgba(255, 68, 68, 0.1); border-color: #ff4444; }
+
+        .no-activations {
+            color: #8a9bba;
+            font-size: 13px;
+            font-style: italic;
+            padding: 8px 0;
+        }
+
+        /* Billing Section */
+        .billing-card {
+            background: #0a1628;
+            border: 1px solid #1a2a4a;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .billing-card p { color: #8a9bba; font-size: 14px; margin-bottom: 16px; }
+
+        .btn-billing {
+            display: inline-block;
+            padding: 10px 24px;
+            background: #1a2a4a;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn-billing:hover { background: #2a3a5a; }
+
+        /* Downloads Section */
+        .downloads-section {
+            margin-top: 12px;
+        }
+
+        .btn-download {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255, 185, 30, 0.1);
+            border: 1px solid rgba(255, 185, 30, 0.3);
+            color: #FFB91E;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-right: 8px;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-download:hover { background: rgba(255, 185, 30, 0.2); }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            color: #8a9bba;
+            padding: 60px 0;
+            font-size: 15px;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            color: #8a9bba;
+            padding: 60px 0;
+        }
+
+        .empty-state h2 { color: #ffffff; margin-bottom: 10px; }
+        .empty-state a { color: #FFB91E; }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .topnav { flex-direction: column; gap: 12px; }
+            .topnav-left { flex-direction: column; align-items: flex-start; }
+            .license-header { flex-direction: column; gap: 8px; }
+            .license-key-row { flex-direction: column; }
+            .license-key { width: 100%; font-size: 14px; }
+            .activation-row { flex-direction: column; gap: 8px; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation -->
+    <div class="topnav">
+        <div class="topnav-left">
+            <img src="/logo.png" alt="SwiftCap EAs">
+            <nav>
+                <a href="/dashboard/licenses" class="active">Licenses</a>
+                <a href="/dashboard/profile">Profile</a>
+            </nav>
+        </div>
+        <div class="topnav-right">
+            <span class="user-email" id="userEmail"></span>
+            <button class="btn-logout" onclick="logout()">Log Out</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1>My Licenses</h1>
+            <p>Manage your license keys, activated accounts, and downloads</p>
+        </div>
+
+        <div id="licensesContainer">
+            <div class="loading">Loading your licenses...</div>
+        </div>
+
+        <!-- Billing Section -->
+        <div class="billing-card">
+            <p>Your purchases and subscriptions are managed through our payment partner.</p>
+            <a href="https://whop.com/swiftcap-eas/" target="_blank" class="btn-billing">Manage Billing on Whop</a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://api.swiftcapeas.com';
+        const token = localStorage.getItem('sc_token');
+        const user = JSON.parse(localStorage.getItem('sc_user') || '{}');
+
+        // Auth check
+        if (!token) {
+            window.location.href = '/dashboard';
+        }
+
+        // Set user email in nav
+        document.getElementById('userEmail').textContent = user.email || '';
+
+        // Product download links
+        const DOWNLOAD_LINKS = {
+            'master': { setFiles: 'https://www.mql5.com/en/market/product/141855', guide: '/guides' },
+            'breakout': { setFiles: 'https://www.mql5.com/en/market/product/150117', guide: '/guides' },
+            'grid': { setFiles: 'https://www.mql5.com/en/market/product/164484', guide: '/guides' },
+            'trinity': { setFiles: 'https://www.mql5.com/en/market/product/165807', guide: '/guides' }
+        };
+
+        function logout() {
+            localStorage.removeItem('sc_token');
+            localStorage.removeItem('sc_user');
+            window.location.href = '/dashboard';
+        }
+
+        function copyKey(key, btnId) {
+            navigator.clipboard.writeText(key).then(() => {
+                const btn = document.getElementById(btnId);
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        async function deactivate(activationId, licenseKey) {
+            if (!confirm('Remove this activation? The account slot will be freed up.')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/dashboard/activations`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ activation_id: activationId })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    loadLicenses(); // Refresh
+                } else {
+                    alert(data.error || 'Failed to deactivate');
+                }
+            } catch (error) {
+                alert('Connection error. Please try again.');
+            }
+        }
+
+        function getStatusBadge(status) {
+            const map = {
+                'active': '<span class="license-badge badge-active">Active</span>',
+                'expired': '<span class="license-badge badge-expired">Expired</span>',
+                'expired_managing': '<span class="license-badge badge-managing">Expiring — Managing Trades</span>',
+                'revoked': '<span class="license-badge badge-revoked">Revoked</span>'
+            };
+            return map[status] || status;
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'Never';
+            return new Date(dateStr).toLocaleDateString('en-US', {
+                year: 'numeric', month: 'short', day: 'numeric'
+            });
+        }
+
+        function renderLicenses(licenses) {
+            const container = document.getElementById('licensesContainer');
+
+            if (!licenses || licenses.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h2>No licenses yet</h2>
+                        <p>Purchase an EA from <a href="https://whop.com/swiftcap-eas/" target="_blank">our store</a> to get started.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+
+            for (const lic of licenses) {
+                const copyBtnId = `copy-${lic.id}`;
+                const downloads = DOWNLOAD_LINKS[lic.product_slug] || {};
+
+                // Activations HTML
+                let activationsHtml = '';
+                if (lic.activations && lic.activations.length > 0) {
+                    for (const act of lic.activations) {
+                        activationsHtml += `
+                            <div class="activation-row">
+                                <div class="activation-info">
+                                    <span class="activation-account">MT5 #${act.mt_account_number}</span>
+                                    <span class="activation-hardware">Device: ${act.hardware_id}</span>
+                                    <span class="activation-date">Since ${formatDate(act.activated_at)}</span>
+                                </div>
+                                <button class="btn-deactivate" onclick="deactivate('${act.id}', '${lic.license_key}')">Remove</button>
+                            </div>
+                        `;
+                    }
+                } else {
+                    activationsHtml = '<p class="no-activations">No activations yet. Attach the EA to MT5 and enter your license key.</p>';
+                }
+
+                html += `
+                    <div class="license-card">
+                        <div class="license-header">
+                            <span class="license-product-name">${lic.product_name}</span>
+                            ${getStatusBadge(lic.status)}
+                        </div>
+
+                        <div class="license-key-row">
+                            <div class="license-key">${lic.license_key}</div>
+                            <button class="btn-copy" id="${copyBtnId}" onclick="copyKey('${lic.license_key}', '${copyBtnId}')">Copy</button>
+                        </div>
+
+                        <div class="license-meta">
+                            <div class="meta-item">
+                                <div class="meta-label">Type</div>
+                                <div class="meta-value">${lic.type.charAt(0).toUpperCase() + lic.type.slice(1)}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Accounts</div>
+                                <div class="meta-value">${lic.accounts_used} / ${lic.max_accounts}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Hardware</div>
+                                <div class="meta-value">${lic.hardware_used} / ${lic.max_hardware}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Expires</div>
+                                <div class="meta-value">${lic.expires_at ? formatDate(lic.expires_at) : 'Never (Lifetime)'}</div>
+                            </div>
+                        </div>
+
+                        <div class="activations-section">
+                            <div class="activations-title">Activated Accounts</div>
+                            ${activationsHtml}
+                        </div>
+
+                        <div class="downloads-section">
+                            ${downloads.setFiles ? `<a href="${downloads.setFiles}" target="_blank" class="btn-download">Download Set Files</a>` : ''}
+                            ${downloads.guide ? `<a href="${downloads.guide}" target="_blank" class="btn-download">Setup Guide</a>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        async function loadLicenses() {
+            try {
+                const response = await fetch(`${API_BASE}/api/dashboard/licenses`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    renderLicenses(data.licenses);
+                } else {
+                    document.getElementById('licensesContainer').innerHTML =
+                        '<div class="loading">Failed to load licenses. Please refresh the page.</div>';
+                }
+            } catch (error) {
+                document.getElementById('licensesContainer').innerHTML =
+                    '<div class="loading">Connection error. Please check your internet and refresh.</div>';
+            }
+        }
+
+        // Load on page ready
+        loadLicenses();
+    </script>
+</body>
+</html>
