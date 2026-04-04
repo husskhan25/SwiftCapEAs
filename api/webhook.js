@@ -40,13 +40,49 @@ const WHOP_PLAN_MAP = {
 };
 
 /**
- * Verify Whop webhook signature using Standard Webhooks spec
- * Signing payload = "{webhook-id}.{webhook-timestamp}.{body}"
- * Key = decoded from secret (strip prefix, decode hex or base64)
- * Signature header = "v1,{base64_hmac_sha256}"
+ * Read the raw body from the request stream.
+ * Vercel auto-parses JSON which destroys the original bytes.
+ * We need the EXACT raw bytes for signature verification.
  */
-function verifyWhopSignature(body, headers) {
-    if (!WHOP_WEBHOOK_SECRET) return false;
+function getRawBody(req) {
+    return new Promise((resolve, reject) => {
+        // If Vercel already parsed and we have rawBody from config, use it
+        if (req.rawBody) {
+            resolve(req.rawBody);
+            return;
+        }
+
+        // If body is already parsed by Vercel, try to read the stream
+        const chunks = [];
+        req.on('data', (chunk) => chunks.push(chunk));
+        req.on('end', () => {
+            if (chunks.length > 0) {
+                resolve(Buffer.concat(chunks).toString('utf8'));
+            } else {
+                // Vercel already consumed the stream — fallback to stringify
+                // This shouldn't happen with bodyParser disabled
+                resolve(JSON.stringify(req.body));
+            }
+        });
+        req.on('error', reject);
+    });
+}
+
+/**
+ * Verify Whop webhook signature using Standard Webhooks spec.
+ * 
+ * Standard Webhooks signing:
+ *   payload = "{msg_id}.{timestamp}.{rawBody}"
+ *   signature = base64( HMAC-SHA256( key, payload ) )
+ * 
+ * The key is derived from the secret:
+ *   - If starts with "whsec_": base64-decode the part after prefix
+ *   - If starts with "ws_": base64-encode the FULL secret, then base64-decode it back (= raw UTF-8 bytes of full secret)
+ *   - Whop SDK does: btoa(secret) then passes to Standard Webhooks which does base64-decode
+ *   - Net result: the HMAC key = raw UTF-8 bytes of the FULL secret string (including "ws_" prefix)
+ */
+function verifyWhopSignature(rawBody, headers) {
+    if (!WHOP_WEBHOOK_SECRET) return true; // Skip if no secret configured
 
     try {
         const msgId = headers['webhook-id'] || '';
@@ -55,22 +91,16 @@ function verifyWhopSignature(body, headers) {
 
         if (!msgId || !msgTimestamp || !msgSignature) return false;
 
-        // Build the signing payload per Standard Webhooks spec
-        const signPayload = `${msgId}.${msgTimestamp}.${body}`;
+        // Standard Webhooks signing payload
+        const signPayload = `${msgId}.${msgTimestamp}.${rawBody}`;
 
-        // Decode the secret key based on prefix
-        let secretBytes;
-        if (WHOP_WEBHOOK_SECRET.startsWith('whsec_')) {
-            secretBytes = Buffer.from(WHOP_WEBHOOK_SECRET.substring(6), 'base64');
-        } else if (WHOP_WEBHOOK_SECRET.startsWith('ws_')) {
-            const hexPart = WHOP_WEBHOOK_SECRET.substring(3);
-            secretBytes = Buffer.from(hexPart, 'hex');
-        } else {
-            secretBytes = Buffer.from(WHOP_WEBHOOK_SECRET, 'base64');
-        }
+        // Whop SDK does: webhookKey = btoa(process.env.WHOP_WEBHOOK_SECRET)
+        // Standard Webhooks then does: key = base64decode(webhookKey)
+        // btoa then base64decode cancels out = raw UTF-8 bytes of the original secret
+        // So the HMAC key is simply the raw UTF-8 bytes of WHOP_WEBHOOK_SECRET
+        const secretKey = Buffer.from(WHOP_WEBHOOK_SECRET, 'utf8');
 
-        // Compute HMAC-SHA256
-        const hmac = crypto.createHmac('sha256', secretBytes);
+        const hmac = crypto.createHmac('sha256', secretKey);
         hmac.update(signPayload);
         const computed = hmac.digest('base64');
 
@@ -90,14 +120,30 @@ function verifyWhopSignature(body, headers) {
     }
 }
 
+// Disable Vercel's automatic body parser so we get the raw body
+module.exports.config = {
+    api: {
+        bodyParser: false,
+    },
+};
+
 module.exports = async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
     try {
-        const rawBody = JSON.stringify(req.body);
-        const event = req.body;
+        // Read the EXACT raw body bytes from the request stream
+        const rawBody = await getRawBody(req);
+
+        // Parse JSON manually from the raw body
+        let event;
+        try {
+            event = JSON.parse(rawBody);
+        } catch (parseErr) {
+            return res.status(400).json({ error: 'Invalid JSON body' });
+        }
+
         const eventType = event.type || event.event || 'unknown';
 
         // Log the raw event first so we can always debug
@@ -109,7 +155,7 @@ module.exports = async function handler(req, res) {
             error: null
         });
 
-        // Verify webhook signature using Standard Webhooks spec
+        // Verify webhook signature using Standard Webhooks spec with raw body
         if (WHOP_WEBHOOK_SECRET && !verifyWhopSignature(rawBody, req.headers)) {
             await supabase.from('webhook_logs').insert({
                 event_type: 'signature_failed',
@@ -153,7 +199,7 @@ module.exports = async function handler(req, res) {
         try {
             await supabase.from('webhook_logs').insert({
                 event_type: 'processing_error',
-                payload: req.body,
+                payload: req.body || { raw_error: 'Could not read body' },
                 processed: false,
                 error: error.message
             });
