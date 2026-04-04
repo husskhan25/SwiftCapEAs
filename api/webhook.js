@@ -229,20 +229,18 @@ async function handleCancellation(event) {
 
     if (!whopMembershipId) return;
 
-    // Find licenses with this membership ID
     const { data: licenses } = await supabase
         .from('licenses')
         .select('*')
         .eq('whop_membership_id', whopMembershipId)
-        .in('status', ['active', 'expired_managing']);
+        .in('status', ['active']);
 
     if (!licenses || licenses.length === 0) return;
 
-    // Mark as expired_managing (stop new trades, manage existing)
     for (const license of licenses) {
         await supabase
             .from('licenses')
-            .update({ status: 'expired_managing' })
+            .update({ status: 'expired' })
             .eq('id', license.id);
     }
 }
