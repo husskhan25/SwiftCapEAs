@@ -178,7 +178,11 @@ async function handleNewPurchase(event) {
 
     // Determine license type from Whop plan ID
     const whopPlanId = data.plan?.id || data.plan_id;
-    let licenseType = WHOP_PLAN_MAP[whopPlanId] || 'lifetime'; // default to lifetime if plan not found
+    let licenseType = WHOP_PLAN_MAP[whopPlanId];
+    if (!licenseType) {
+        console.warn(`Unknown plan ID: ${whopPlanId}, defaulting to lifetime`);
+        licenseType = 'lifetime';
+    }
 
     // Create licenses
     const createdLicenses = [];
