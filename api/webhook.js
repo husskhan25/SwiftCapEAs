@@ -41,13 +41,55 @@ const WHOP_PLAN_MAP = {
 
 /**
  * Verify Whop webhook signature
+ * Whop uses Standard Webhooks spec — signature is in whop-signature header
+ * The secret from Whop dashboard needs to be base64-decoded before use as HMAC key
  */
-function verifyWhopSignature(payload, signature) {
-    if (!WHOP_WEBHOOK_SECRET) return false;
-    const hmac = crypto.createHmac('sha256', WHOP_WEBHOOK_SECRET);
-    hmac.update(payload);
-    const expected = hmac.digest('hex');
-    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+function verifyWhopSignature(payload, signatureHeader) {
+    if (!WHOP_WEBHOOK_SECRET || !signatureHeader) return false;
+
+    try {
+        // Whop Standard Webhooks format: "v1,<base64-signature>"
+        // There may be multiple signatures separated by spaces
+        const signatures = signatureHeader.split(' ');
+
+        // Try the secret as-is first (hex HMAC), then try Standard Webhooks format
+        for (const sig of signatures) {
+            const parts = sig.split(',');
+
+            if (parts.length === 2 && parts[0] === 'v1') {
+                // Standard Webhooks format: v1,<base64-signature>
+                // The key needs to be base64-decoded if it starts with "whsec_"
+                if (WHOP_WEBHOOK_SECRET.startsWith('whsec_')) {
+                    secretBytes = Buffer.from(WHOP_WEBHOOK_SECRET.substring(6), 'base64');
+                } else if (WHOP_WEBHOOK_SECRET.startsWith('ws_')) {
+                    // Whop company webhook format — use raw string as HMAC key
+                    secretBytes = Buffer.from(WHOP_WEBHOOK_SECRET);
+                } else {
+                    secretBytes = Buffer.from(WHOP_WEBHOOK_SECRET, 'base64');
+                }
+
+                const hmac = crypto.createHmac('sha256', secretBytes);
+                hmac.update(payload);
+                const expected = hmac.digest('base64');
+
+                if (expected === parts[1]) return true;
+            } else {
+                // Plain hex signature format (fallback)
+                const hmac = crypto.createHmac('sha256', WHOP_WEBHOOK_SECRET);
+                hmac.update(payload);
+                const expected = hmac.digest('hex');
+
+                if (expected.length === sig.length) {
+                    if (crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) return true;
+                }
+            }
+        }
+
+        return false;
+    } catch (e) {
+        console.error('Signature verification error:', e);
+        return false;
+    }
 }
 
 module.exports = async function handler(req, res) {
@@ -56,36 +98,51 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        // Verify webhook signature
-        const signature = req.headers['whop-signature'] || req.headers['x-whop-signature'] || '';
         const rawBody = JSON.stringify(req.body);
 
-        if (WHOP_WEBHOOK_SECRET && !verifyWhopSignature(rawBody, signature)) {
-            // Log the failed attempt
+        // Collect all possible signature headers
+        const signature = req.headers['whop-signature']
+            || req.headers['x-whop-signature']
+            || req.headers['webhook-signature']
+            || '';
+
+        // Log the raw event first (before signature check) so we can debug
+        const event = req.body;
+        const eventType = event.type || event.event || 'unknown';
+
+        await supabase.from('webhook_logs').insert({
+            event_type: eventType,
+            whop_membership_id: event.data?.id || event.data?.membership_id || null,
+            payload: event,
+            processed: false,
+            error: null
+        });
+
+        // Verify webhook signature (skip if no secret configured)
+        if (WHOP_WEBHOOK_SECRET && signature && !verifyWhopSignature(rawBody, signature)) {
             await supabase.from('webhook_logs').insert({
                 event_type: 'signature_failed',
-                payload: req.body,
+                payload: { headers: {
+                    'whop-signature': req.headers['whop-signature'] || null,
+                    'x-whop-signature': req.headers['x-whop-signature'] || null,
+                    'webhook-signature': req.headers['webhook-signature'] || null,
+                }, body_preview: rawBody.substring(0, 500) },
                 processed: false,
                 error: 'Invalid webhook signature'
             });
             return res.status(401).json({ error: 'Invalid signature' });
         }
 
-        const event = req.body;
-        const eventType = event.type || event.event || 'unknown';
-
-        // Log the webhook
-        await supabase.from('webhook_logs').insert({
-            event_type: eventType,
-            whop_membership_id: event.data?.membership_id || event.data?.id || null,
-            payload: event,
-            processed: false
-        });
-
         // Handle different event types
-        if (eventType === 'payment.succeeded' || eventType === 'membership.went_valid') {
+        // Whop V1 API: membership.activated / membership.deactivated
+        // Also support legacy names just in case
+        if (eventType === 'membership.activated' ||
+            eventType === 'payment.succeeded' ||
+            eventType === 'membership.went_valid') {
             await handleNewPurchase(event);
-        } else if (eventType === 'membership.went_invalid' || eventType === 'membership.cancelled') {
+        } else if (eventType === 'membership.deactivated' ||
+                   eventType === 'membership.went_invalid' ||
+                   eventType === 'membership.cancelled') {
             await handleCancellation(event);
         }
 
@@ -93,26 +150,58 @@ module.exports = async function handler(req, res) {
         await supabase
             .from('webhook_logs')
             .update({ processed: true })
-            .eq('whop_membership_id', event.data?.membership_id || event.data?.id);
+            .eq('whop_membership_id', event.data?.id || event.data?.membership_id);
 
         return res.status(200).json({ received: true });
 
     } catch (error) {
         console.error('Webhook error:', error);
+
+        // Log the error for debugging
+        try {
+            await supabase.from('webhook_logs').insert({
+                event_type: 'processing_error',
+                payload: req.body,
+                processed: false,
+                error: error.message
+            });
+        } catch (logErr) {
+            console.error('Failed to log webhook error:', logErr);
+        }
+
         return res.status(500).json({ error: 'Internal server error' });
     }
 };
 
 async function handleNewPurchase(event) {
     const data = event.data || {};
-    const customerEmail = data.email || data.user?.email;
-    const customerName = data.name || data.user?.name || null;
-    const whopUserId = data.user_id || data.user?.id;
-    const whopProductId = data.product_id || data.product?.id;
-    const whopMembershipId = data.membership_id || data.id;
+
+    // Whop V1 payload structure:
+    // data.user.email, data.user.name, data.user.id
+    // data.product.id, data.plan.id
+    // data.id = membership ID
+    const customerEmail = data.user?.email || data.email;
+    const customerName = data.user?.name || data.name || null;
+    const whopUserId = data.user?.id || data.user_id;
+    const whopProductId = data.product?.id || data.product_id;
+    const whopMembershipId = data.id || data.membership_id;
 
     if (!customerEmail) {
-        throw new Error('No customer email in webhook payload');
+        throw new Error('No customer email in webhook payload. Data keys: ' + Object.keys(data).join(', '));
+    }
+
+    // Check for duplicate — avoid creating license twice for same membership
+    if (whopMembershipId) {
+        const { data: existingLicense } = await supabase
+            .from('licenses')
+            .select('id')
+            .eq('whop_membership_id', whopMembershipId)
+            .single();
+
+        if (existingLicense) {
+            console.log(`License already exists for membership ${whopMembershipId}, skipping`);
+            return;
+        }
     }
 
     // Find or create user
@@ -173,7 +262,7 @@ async function handleNewPurchase(event) {
     }
 
     if (licensesToCreate.length === 0) {
-        throw new Error(`Unknown product: ${whopProductId}`);
+        throw new Error(`Unknown product ID: ${whopProductId}, slug: ${productSlug}`);
     }
 
     // Determine license type from Whop plan ID
@@ -202,7 +291,7 @@ async function handleNewPurchase(event) {
         });
     }
 
-    // Generate password setup token (or new license email for existing users)
+    // Generate password setup token
     const passwordToken = generateSecureToken();
     const tokenExpiry = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(); // 48 hours
 
@@ -225,7 +314,8 @@ async function handleNewPurchase(event) {
 
 async function handleCancellation(event) {
     const data = event.data || {};
-    const whopMembershipId = data.membership_id || data.id;
+    // V1: membership ID is data.id
+    const whopMembershipId = data.id || data.membership_id;
 
     if (!whopMembershipId) return;
 
