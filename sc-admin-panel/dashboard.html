@@ -431,7 +431,6 @@
                 <label>Status</label>
                 <select id="editStatus">
                     <option value="active">Active</option>
-                    <option value="expired_managing">Expired (Managing)</option>
                     <option value="expired">Expired</option>
                     <option value="revoked">Revoked</option>
                 </select>
@@ -481,7 +480,7 @@
         }
 
         function statusBadge(s) {
-            const map = { active: 'b-active', expired: 'b-expired', expired_managing: 'b-managing', revoked: 'b-revoked' };
+            const map = { active: 'b-active', expired: 'b-expired', revoked: 'b-revoked' };
             return `<span class="badge ${map[s] || ''}">${s}</span>`;
         }
 
