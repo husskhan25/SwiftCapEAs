@@ -40,48 +40,46 @@ const WHOP_PLAN_MAP = {
 };
 
 /**
- * Verify Whop webhook signature
- * Whop uses Standard Webhooks spec — signature is in whop-signature header
- * The secret from Whop dashboard needs to be base64-decoded before use as HMAC key
+ * Verify Whop webhook signature using Standard Webhooks spec
+ * Signing payload = "{webhook-id}.{webhook-timestamp}.{body}"
+ * Key = decoded from secret (strip prefix, decode hex or base64)
+ * Signature header = "v1,{base64_hmac_sha256}"
  */
-function verifyWhopSignature(payload, signatureHeader) {
-    if (!WHOP_WEBHOOK_SECRET || !signatureHeader) return false;
+function verifyWhopSignature(body, headers) {
+    if (!WHOP_WEBHOOK_SECRET) return false;
 
     try {
-        // Whop Standard Webhooks format: "v1,<base64-signature>"
-        // There may be multiple signatures separated by spaces
-        const signatures = signatureHeader.split(' ');
+        const msgId = headers['webhook-id'] || '';
+        const msgTimestamp = headers['webhook-timestamp'] || '';
+        const msgSignature = headers['webhook-signature'] || '';
 
-        // Try the secret as-is first (hex HMAC), then try Standard Webhooks format
+        if (!msgId || !msgTimestamp || !msgSignature) return false;
+
+        // Build the signing payload per Standard Webhooks spec
+        const signPayload = `${msgId}.${msgTimestamp}.${body}`;
+
+        // Decode the secret key based on prefix
+        let secretBytes;
+        if (WHOP_WEBHOOK_SECRET.startsWith('whsec_')) {
+            secretBytes = Buffer.from(WHOP_WEBHOOK_SECRET.substring(6), 'base64');
+        } else if (WHOP_WEBHOOK_SECRET.startsWith('ws_')) {
+            const hexPart = WHOP_WEBHOOK_SECRET.substring(3);
+            secretBytes = Buffer.from(hexPart, 'hex');
+        } else {
+            secretBytes = Buffer.from(WHOP_WEBHOOK_SECRET, 'base64');
+        }
+
+        // Compute HMAC-SHA256
+        const hmac = crypto.createHmac('sha256', secretBytes);
+        hmac.update(signPayload);
+        const computed = hmac.digest('base64');
+
+        // The signature header can contain multiple signatures separated by spaces
+        const signatures = msgSignature.split(' ');
         for (const sig of signatures) {
             const parts = sig.split(',');
-
             if (parts.length === 2 && parts[0] === 'v1') {
-                // Standard Webhooks format: v1,<base64-signature>
-                // The key needs to be base64-decoded if it starts with "whsec_"
-                if (WHOP_WEBHOOK_SECRET.startsWith('whsec_')) {
-                    secretBytes = Buffer.from(WHOP_WEBHOOK_SECRET.substring(6), 'base64');
-                } else if (WHOP_WEBHOOK_SECRET.startsWith('ws_')) {
-                    // Whop company webhook format — use raw string as HMAC key
-                    secretBytes = Buffer.from(WHOP_WEBHOOK_SECRET);
-                } else {
-                    secretBytes = Buffer.from(WHOP_WEBHOOK_SECRET, 'base64');
-                }
-
-                const hmac = crypto.createHmac('sha256', secretBytes);
-                hmac.update(payload);
-                const expected = hmac.digest('base64');
-
-                if (expected === parts[1]) return true;
-            } else {
-                // Plain hex signature format (fallback)
-                const hmac = crypto.createHmac('sha256', WHOP_WEBHOOK_SECRET);
-                hmac.update(payload);
-                const expected = hmac.digest('hex');
-
-                if (expected.length === sig.length) {
-                    if (crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) return true;
-                }
+                if (computed === parts[1]) return true;
             }
         }
 
@@ -99,17 +97,10 @@ module.exports = async function handler(req, res) {
 
     try {
         const rawBody = JSON.stringify(req.body);
-
-        // Collect all possible signature headers
-        const signature = req.headers['whop-signature']
-            || req.headers['x-whop-signature']
-            || req.headers['webhook-signature']
-            || '';
-
-        // Log the raw event first (before signature check) so we can debug
         const event = req.body;
         const eventType = event.type || event.event || 'unknown';
 
+        // Log the raw event first so we can always debug
         await supabase.from('webhook_logs').insert({
             event_type: eventType,
             whop_membership_id: event.data?.id || event.data?.membership_id || null,
@@ -118,15 +109,18 @@ module.exports = async function handler(req, res) {
             error: null
         });
 
-        // Verify webhook signature (skip if no secret configured)
-        if (WHOP_WEBHOOK_SECRET && signature && !verifyWhopSignature(rawBody, signature)) {
+        // Verify webhook signature using Standard Webhooks spec
+        if (WHOP_WEBHOOK_SECRET && !verifyWhopSignature(rawBody, req.headers)) {
             await supabase.from('webhook_logs').insert({
                 event_type: 'signature_failed',
-                payload: { headers: {
-                    'whop-signature': req.headers['whop-signature'] || null,
-                    'x-whop-signature': req.headers['x-whop-signature'] || null,
-                    'webhook-signature': req.headers['webhook-signature'] || null,
-                }, body_preview: rawBody.substring(0, 500) },
+                payload: {
+                    headers: {
+                        'webhook-id': req.headers['webhook-id'] || null,
+                        'webhook-timestamp': req.headers['webhook-timestamp'] || null,
+                        'webhook-signature': req.headers['webhook-signature'] || null,
+                    },
+                    body_preview: rawBody.substring(0, 500)
+                },
                 processed: false,
                 error: 'Invalid webhook signature'
             });
@@ -134,8 +128,7 @@ module.exports = async function handler(req, res) {
         }
 
         // Handle different event types
-        // Whop V1 API: membership.activated / membership.deactivated
-        // Also support legacy names just in case
+        // Whop V1: membership.activated / membership.deactivated
         if (eventType === 'membership.activated' ||
             eventType === 'payment.succeeded' ||
             eventType === 'membership.went_valid') {
@@ -157,7 +150,6 @@ module.exports = async function handler(req, res) {
     } catch (error) {
         console.error('Webhook error:', error);
 
-        // Log the error for debugging
         try {
             await supabase.from('webhook_logs').insert({
                 event_type: 'processing_error',
@@ -176,10 +168,7 @@ module.exports = async function handler(req, res) {
 async function handleNewPurchase(event) {
     const data = event.data || {};
 
-    // Whop V1 payload structure:
-    // data.user.email, data.user.name, data.user.id
-    // data.product.id, data.plan.id
-    // data.id = membership ID
+    // Whop V1 payload structure
     const customerEmail = data.user?.email || data.email;
     const customerName = data.user?.name || data.name || null;
     const whopUserId = data.user?.id || data.user_id;
@@ -228,7 +217,6 @@ async function handleNewPurchase(event) {
         if (error) throw new Error(`Failed to create user: ${error.message}`);
         user = newUser;
     } else {
-        // Update whop_user_id if not set
         if (!user.whop_user_id && whopUserId) {
             await supabase
                 .from('users')
@@ -244,7 +232,6 @@ async function handleNewPurchase(event) {
     let licensesToCreate = [];
 
     if (isBundle) {
-        // Get all 4 products
         const { data: products } = await supabase
             .from('products')
             .select('*')
@@ -282,8 +269,8 @@ async function handleNewPurchase(event) {
             licenseType,
             'whop',
             whopMembershipId,
-            null, // use product default max_accounts
-            null  // use product default max_hardware
+            null,
+            null
         );
         createdLicenses.push({
             licenseKey: license.license_key,
@@ -293,7 +280,7 @@ async function handleNewPurchase(event) {
 
     // Generate password setup token
     const passwordToken = generateSecureToken();
-    const tokenExpiry = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(); // 48 hours
+    const tokenExpiry = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
 
     await supabase
         .from('users')
@@ -314,7 +301,6 @@ async function handleNewPurchase(event) {
 
 async function handleCancellation(event) {
     const data = event.data || {};
-    // V1: membership ID is data.id
     const whopMembershipId = data.id || data.membership_id;
 
     if (!whopMembershipId) return;
