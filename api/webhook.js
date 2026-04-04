@@ -7,13 +7,36 @@ const { sendWelcomeEmail } = require('../lib/email');
 const WHOP_WEBHOOK_SECRET = process.env.WHOP_WEBHOOK_SECRET;
 
 // Map your Whop product IDs to your database product slugs
-// You'll fill these in after creating products on Whop
 const WHOP_PRODUCT_MAP = {
-    // 'whop_product_id_here': 'master',
-    // 'whop_product_id_here': 'breakout',
-    // 'whop_product_id_here': 'grid',
-    // 'whop_product_id_here': 'trinity',
-    // 'whop_product_id_here': 'bundle',
+    'prod_VWiZe7trObFc9': 'master',
+    'prod_DLdSA8WvKKNwM': 'breakout',
+    'prod_SmKxaqg7bUe2H': 'grid',
+    'prod_WQB8OIaKN8seQ': 'trinity',
+    'prod_a7cAN7joMLn3h': 'bundle',
+};
+
+// Map Whop plan IDs to license types
+const WHOP_PLAN_MAP = {
+    // Master EA plans
+    'plan_4rSGn5IJb6Wks': 'monthly',
+    'plan_uczD64GL2WQA6': 'quarterly',
+    'plan_nItuKRzbeS574': 'lifetime',
+    // Breakout EA plans
+    'plan_ZS1JTssBfXT1w': 'monthly',
+    'plan_km3xjwdoD2Qfr': 'quarterly',
+    'plan_2fAohMtqssxDq': 'lifetime',
+    // Grid EA plans
+    'plan_ZvsnGjMVsoNKQ': 'monthly',
+    'plan_6zQC9pdMl5uu2': 'quarterly',
+    'plan_AzXkwyvRmeKzR': 'lifetime',
+    // Trinity EA plans
+    'plan_5LOQE83J2jTRo': 'monthly',
+    'plan_07N1SkAvDCu0K': 'quarterly',
+    'plan_z4V6hGfCjHEAr': 'lifetime',
+    // Bundle plans
+    'plan_tIhsmtsVaUN04': 'monthly',
+    'plan_9KCAFzeJkQnB1': 'quarterly',
+    'plan_xZkY4s2U7DSUz': 'lifetime',
 };
 
 /**
@@ -153,13 +176,12 @@ async function handleNewPurchase(event) {
         throw new Error(`Unknown product: ${whopProductId}`);
     }
 
-    // Determine license type from Whop data
-    // You'll configure this based on your Whop product setup
-    let licenseType = 'lifetime'; // default
-    if (data.plan_type === 'monthly' || data.renewal_period === 'monthly') {
-        licenseType = 'monthly';
-    } else if (data.plan_type === 'quarterly' || data.renewal_period === 'quarterly') {
-        licenseType = 'quarterly';
+    // Determine license type from Whop plan ID
+    const whopPlanId = data.plan?.id || data.plan_id;
+    let licenseType = WHOP_PLAN_MAP[whopPlanId];
+    if (!licenseType) {
+        console.warn(`Unknown plan ID: ${whopPlanId}, defaulting to lifetime`);
+        licenseType = 'lifetime';
     }
 
     // Create licenses
