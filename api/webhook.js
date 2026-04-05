@@ -42,25 +42,21 @@ const WHOP_PLAN_MAP = {
 /**
  * Read the raw body from the request stream.
  * Vercel auto-parses JSON which destroys the original bytes.
- * We need the EXACT raw bytes for signature verification.
+ * We need the EXACT raw bytes for Standard Webhooks signature verification.
  */
 function getRawBody(req) {
     return new Promise((resolve, reject) => {
-        // If Vercel already parsed and we have rawBody from config, use it
         if (req.rawBody) {
             resolve(req.rawBody);
             return;
         }
 
-        // If body is already parsed by Vercel, try to read the stream
         const chunks = [];
         req.on('data', (chunk) => chunks.push(chunk));
         req.on('end', () => {
             if (chunks.length > 0) {
                 resolve(Buffer.concat(chunks).toString('utf8'));
             } else {
-                // Vercel already consumed the stream — fallback to stringify
-                // This shouldn't happen with bodyParser disabled
                 resolve(JSON.stringify(req.body));
             }
         });
@@ -70,19 +66,16 @@ function getRawBody(req) {
 
 /**
  * Verify Whop webhook signature using Standard Webhooks spec.
- * 
+ *
  * Standard Webhooks signing:
- *   payload = "{msg_id}.{timestamp}.{rawBody}"
+ *   payload = "{webhook-id}.{webhook-timestamp}.{rawBody}"
  *   signature = base64( HMAC-SHA256( key, payload ) )
- * 
- * The key is derived from the secret:
- *   - If starts with "whsec_": base64-decode the part after prefix
- *   - If starts with "ws_": base64-encode the FULL secret, then base64-decode it back (= raw UTF-8 bytes of full secret)
- *   - Whop SDK does: btoa(secret) then passes to Standard Webhooks which does base64-decode
- *   - Net result: the HMAC key = raw UTF-8 bytes of the FULL secret string (including "ws_" prefix)
+ *
+ * Whop SDK does: webhookKey = btoa(secret) → Standard Webhooks does base64decode(webhookKey)
+ * btoa + base64decode cancel out → HMAC key = raw UTF-8 bytes of the full secret string
  */
 function verifyWhopSignature(rawBody, headers) {
-    if (!WHOP_WEBHOOK_SECRET) return true; // Skip if no secret configured
+    if (!WHOP_WEBHOOK_SECRET) return true;
 
     try {
         const msgId = headers['webhook-id'] || '';
@@ -91,20 +84,22 @@ function verifyWhopSignature(rawBody, headers) {
 
         if (!msgId || !msgTimestamp || !msgSignature) return false;
 
+        // Reject webhooks older than 5 minutes (replay protection)
+        const now = Math.floor(Date.now() / 1000);
+        const ts = parseInt(msgTimestamp, 10);
+        if (isNaN(ts) || Math.abs(now - ts) > 300) return false;
+
         // Standard Webhooks signing payload
         const signPayload = `${msgId}.${msgTimestamp}.${rawBody}`;
 
-        // Whop SDK does: webhookKey = btoa(process.env.WHOP_WEBHOOK_SECRET)
-        // Standard Webhooks then does: key = base64decode(webhookKey)
-        // btoa then base64decode cancels out = raw UTF-8 bytes of the original secret
-        // So the HMAC key is simply the raw UTF-8 bytes of WHOP_WEBHOOK_SECRET
+        // HMAC key = raw UTF-8 bytes of the full secret
         const secretKey = Buffer.from(WHOP_WEBHOOK_SECRET, 'utf8');
 
         const hmac = crypto.createHmac('sha256', secretKey);
         hmac.update(signPayload);
         const computed = hmac.digest('base64');
 
-        // The signature header can contain multiple signatures separated by spaces
+        // Signature header can contain multiple signatures separated by spaces
         const signatures = msgSignature.split(' ');
         for (const sig of signatures) {
             const parts = sig.split(',');
@@ -120,7 +115,7 @@ function verifyWhopSignature(rawBody, headers) {
     }
 }
 
-// Disable Vercel's automatic body parser so we get the raw body
+// Disable Vercel's automatic body parser so we get the raw body for signature verification
 module.exports.config = {
     api: {
         bodyParser: false,
@@ -173,17 +168,15 @@ module.exports = async function handler(req, res) {
             return res.status(401).json({ error: 'Invalid signature' });
         }
 
-        // Handle different event types
-        // Whop V1: membership.activated / membership.deactivated
-        if (eventType === 'membership.activated' ||
-            eventType === 'payment.succeeded' ||
-            eventType === 'membership.went_valid') {
+        // Handle webhook events
+        // membership.activated = new purchase or renewal → create license
+        // membership.deactivated = cancelled/failed/expired → expire license
+        if (eventType === 'membership.activated') {
             await handleNewPurchase(event);
-        } else if (eventType === 'membership.deactivated' ||
-                   eventType === 'membership.went_invalid' ||
-                   eventType === 'membership.cancelled') {
+        } else if (eventType === 'membership.deactivated') {
             await handleCancellation(event);
         }
+        // All other events are logged but ignored
 
         // Mark as processed
         await supabase
@@ -199,7 +192,7 @@ module.exports = async function handler(req, res) {
         try {
             await supabase.from('webhook_logs').insert({
                 event_type: 'processing_error',
-                payload: req.body || { raw_error: 'Could not read body' },
+                payload: typeof req.body === 'object' ? req.body : { raw_error: 'Could not read body' },
                 processed: false,
                 error: error.message
             });
@@ -306,27 +299,57 @@ async function handleNewPurchase(event) {
         licenseType = 'lifetime';
     }
 
-    // Create licenses
+    // Create licenses with race condition protection
     const createdLicenses = [];
     for (const product of licensesToCreate) {
-        const license = await createLicense(
-            user.id,
-            product.id,
-            licenseType,
-            'whop',
-            whopMembershipId,
-            null,
-            null
-        );
-        createdLicenses.push({
-            licenseKey: license.license_key,
-            productName: product.name
-        });
+        // Final duplicate check right before insert (minimizes race window)
+        if (whopMembershipId) {
+            const { data: raceCheck } = await supabase
+                .from('licenses')
+                .select('id')
+                .eq('whop_membership_id', whopMembershipId)
+                .eq('product_id', product.id)
+                .single();
+
+            if (raceCheck) {
+                console.log(`Race condition caught: license already exists for membership ${whopMembershipId}, product ${product.slug}`);
+                continue;
+            }
+        }
+
+        try {
+            const license = await createLicense(
+                user.id,
+                product.id,
+                licenseType,
+                'whop',
+                whopMembershipId,
+                null,
+                null
+            );
+            createdLicenses.push({
+                licenseKey: license.license_key,
+                productName: product.name
+            });
+        } catch (createErr) {
+            // If it's a unique constraint violation, another webhook already created it
+            if (createErr.message && (createErr.message.includes('duplicate') || createErr.message.includes('unique'))) {
+                console.log(`Duplicate license prevented by DB constraint for membership ${whopMembershipId}`);
+                continue;
+            }
+            throw createErr;
+        }
+    }
+
+    // Only send email if we actually created licenses (not a duplicate)
+    if (createdLicenses.length === 0) {
+        console.log(`No new licenses created for membership ${whopMembershipId} — all duplicates`);
+        return;
     }
 
     // Generate password setup token
     const passwordToken = generateSecureToken();
-    const tokenExpiry = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
+    const tokenExpiry = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(); // 48 hours
 
     await supabase
         .from('users')
